@@ -1,9 +1,20 @@
 #include "stdafx.h"
 #include "MainForm.h"
-
+#include <Windows.h>
+#include <sstream>
 
 namespace My05HydraReading
 {
+	namespace
+	{
+		std::wstring GetDefaultIniFilename(const bool left)
+		{
+			wchar_t dir[MAX_PATH];
+			GetCurrentDirectory(MAX_PATH, dir);
+			return std::wstring(dir) + (left ? L"/settingsLeft.ini" :  L"/settingsRight.ini");
+		}
+	}
+
 	MainForm::MainForm(void) :
 		mLeftControllerIndex(-1),
 		mRightControllerIndex(-1)
@@ -19,6 +30,15 @@ namespace My05HydraReading
 		}
 	}
 
+	System::Void MainForm::OnAboutClicked(System::Object^  sender, System::EventArgs^  e)
+	{
+		if(!mAboutForm)
+		{
+			mAboutForm = gcnew AboutForm();
+		}
+		mAboutForm->ShowDialog();
+	}
+
 	System::Void MainForm::OnOpen(System::Object^  sender, System::EventArgs^  e)
 	{
 		this->mTimer = gcnew System::Windows::Forms::Timer();
@@ -32,6 +52,12 @@ namespace My05HydraReading
 		this->mControllerChoice->Items->Add("right controller");
 		//for some reason I can't set this in the Visual Editor thingy.
 		this->mControllerChoice->SelectedIndex = 0; //0: left, 1: right
+
+		if(!LoadSettings(GetDefaultIniFilename(true), true) || !LoadSettings(GetDefaultIniFilename(false), false) )
+		{
+			Error("Could not load settings!");
+			return;
+		}
 	}
 
 	void MainForm::Error(const std::string& message)
@@ -48,6 +74,10 @@ namespace My05HydraReading
 		this->mLabelXAxis->Visible = !display;
 		this->mLabelXAxisValue->Visible = !display;
 		this->mControllerChoice->Visible = !display;
+		this->mSaveButton->Visible = !display;
+		this->mLoadButton->Visible = !display;
+		this->mOriginButton->Visible = !display;
+		this->mAboutButton->Visible = !display;
 
 		//base message
 		this->mLabelBase->Visible = display;
@@ -165,5 +195,38 @@ namespace My05HydraReading
 		//ss<<mControllerChoice->SelectedIndex;
 		ss << data.pos[0];
 		this->mLabelXAxisValue->Text = gcnew String(ss.str().c_str());
+	}
+
+
+	const bool MainForm::SaveSettings(const std::wstring& filename, const bool left)
+	{
+		if(!WritePrivateProfileString(L"section", L"key", L"value", filename.c_str()))
+		{
+			return false;
+		}
+		return true;
+	}
+
+	const bool MainForm::LoadSettings(const std::wstring& filename, const bool left)
+	{
+		wchar_t buffer[64];
+#ifdef _DEBUG
+		if(GetPrivateProfileString(L"debug", L"bDisplayBaseMessage", L"false", buffer, 64, filename.c_str()) == 0) //may truncate
+		{
+			return false;
+		}
+		std::wstring bDisplayBaseMessage(buffer);
+		if(bDisplayBaseMessage == L"true")
+		{
+			DisplayBaseMessage(true);
+		}
+#endif
+		/*
+		std::wstringstream wss;
+		wss << buffer;
+		int somenumber;
+		wss >> somenumber;
+		*/
+		return true;
 	}
 }

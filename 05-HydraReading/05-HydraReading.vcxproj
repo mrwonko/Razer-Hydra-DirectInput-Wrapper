@@ -89,6 +89,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="05-HydraReading.cpp" />
+    <ClCompile Include="AboutForm.cpp" />
     <ClCompile Include="AssemblyInfo.cpp" />
     <ClCompile Include="InitForm.cpp" />
     <ClCompile Include="MainForm.cpp" />
@@ -98,6 +99,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AboutForm.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="MainForm.h">
       <FileType>CppForm</FileType>
     </ClInclude>
@@ -111,6 +115,9 @@
     <ResourceCompile Include="app.rc" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="AboutForm.resx">
+      <DependentUpon>AboutForm.h</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="MainForm.resX">
       <DependentUpon>MainForm.h</DependentUpon>
       <SubType>Designer</SubType>

@@ -5,6 +5,7 @@
 #include <vector>
 #include <cassert>
 #include <sixense.h>
+#include "AboutForm.h"
 
 namespace My05HydraReading
 {
@@ -32,7 +33,7 @@ namespace My05HydraReading
 
 	private:
 		//automatically generated form elements
-		System::Windows::Forms::Label^  mLabelXAxis;
+
 		System::Windows::Forms::Label^  mLabelXAxisValue;
 		System::Windows::Forms::Label^  mLabelBase;
 		System::Windows::Forms::ComboBox^  mControllerChoice;
@@ -41,6 +42,11 @@ namespace My05HydraReading
 		/// Erforderliche Designervariable.
 		/// </summary>
 		System::ComponentModel::Container ^components;
+	private: System::Windows::Forms::Label^  mLabelXAxis;
+	private: System::Windows::Forms::Button^  mSaveButton;
+	private: System::Windows::Forms::Button^  mLoadButton;
+	private: System::Windows::Forms::Button^  mOriginButton;
+	private: System::Windows::Forms::Button^  mAboutButton;
 
 		/// \brief Timer for periodically polling the Hydra
 		System::Windows::Forms::Timer^ mTimer;
@@ -56,12 +62,16 @@ namespace My05HydraReading
 			this->mLabelXAxisValue = (gcnew System::Windows::Forms::Label());
 			this->mLabelBase = (gcnew System::Windows::Forms::Label());
 			this->mControllerChoice = (gcnew System::Windows::Forms::ComboBox());
+			this->mSaveButton = (gcnew System::Windows::Forms::Button());
+			this->mLoadButton = (gcnew System::Windows::Forms::Button());
+			this->mOriginButton = (gcnew System::Windows::Forms::Button());
+			this->mAboutButton = (gcnew System::Windows::Forms::Button());
 			this->SuspendLayout();
 			// 
 			// mLabelXAxis
 			// 
 			this->mLabelXAxis->AutoSize = true;
-			this->mLabelXAxis->Location = System::Drawing::Point(12, 36);
+			this->mLabelXAxis->Location = System::Drawing::Point(12, 52);
 			this->mLabelXAxis->Name = L"mLabelXAxis";
 			this->mLabelXAxis->Size = System::Drawing::Size(39, 13);
 			this->mLabelXAxis->TabIndex = 1;
@@ -70,7 +80,7 @@ namespace My05HydraReading
 			// mLabelXAxisValue
 			// 
 			this->mLabelXAxisValue->AutoSize = true;
-			this->mLabelXAxisValue->Location = System::Drawing::Point(57, 36);
+			this->mLabelXAxisValue->Location = System::Drawing::Point(57, 52);
 			this->mLabelXAxisValue->Name = L"mLabelXAxisValue";
 			this->mLabelXAxisValue->Size = System::Drawing::Size(25, 13);
 			this->mLabelXAxisValue->TabIndex = 2;
@@ -90,16 +100,57 @@ namespace My05HydraReading
 			// 
 			this->mControllerChoice->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
 			this->mControllerChoice->FormattingEnabled = true;
-			this->mControllerChoice->Location = System::Drawing::Point(12, 12);
+			this->mControllerChoice->Location = System::Drawing::Point(15, 12);
 			this->mControllerChoice->Name = L"mControllerChoice";
 			this->mControllerChoice->Size = System::Drawing::Size(126, 21);
 			this->mControllerChoice->TabIndex = 0;
+			// 
+			// mSaveButton
+			// 
+			this->mSaveButton->Location = System::Drawing::Point(147, 12);
+			this->mSaveButton->Name = L"mSaveButton";
+			this->mSaveButton->Size = System::Drawing::Size(50, 23);
+			this->mSaveButton->TabIndex = 3;
+			this->mSaveButton->Text = L"Save";
+			this->mSaveButton->UseVisualStyleBackColor = true;
+			// 
+			// mLoadButton
+			// 
+			this->mLoadButton->Location = System::Drawing::Point(203, 12);
+			this->mLoadButton->Name = L"mLoadButton";
+			this->mLoadButton->Size = System::Drawing::Size(50, 23);
+			this->mLoadButton->TabIndex = 4;
+			this->mLoadButton->Text = L"Load";
+			this->mLoadButton->UseVisualStyleBackColor = true;
+			// 
+			// mOriginButton
+			// 
+			this->mOriginButton->Location = System::Drawing::Point(259, 12);
+			this->mOriginButton->Name = L"mOriginButton";
+			this->mOriginButton->Size = System::Drawing::Size(75, 23);
+			this->mOriginButton->TabIndex = 5;
+			this->mOriginButton->Text = L"Set Origin";
+			this->mOriginButton->UseVisualStyleBackColor = true;
+			// 
+			// mAboutButton
+			// 
+			this->mAboutButton->Location = System::Drawing::Point(361, 12);
+			this->mAboutButton->Name = L"mAboutButton";
+			this->mAboutButton->Size = System::Drawing::Size(75, 23);
+			this->mAboutButton->TabIndex = 6;
+			this->mAboutButton->Text = L"About";
+			this->mAboutButton->UseVisualStyleBackColor = true;
+			this->mAboutButton->Click += gcnew System::EventHandler(this, &MainForm::OnAboutClicked);
 			// 
 			// MainForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(366, 229);
+			this->ClientSize = System::Drawing::Size(448, 229);
+			this->Controls->Add(this->mAboutButton);
+			this->Controls->Add(this->mOriginButton);
+			this->Controls->Add(this->mLoadButton);
+			this->Controls->Add(this->mSaveButton);
 			this->Controls->Add(this->mControllerChoice);
 			this->Controls->Add(this->mLabelXAxisValue);
 			this->Controls->Add(this->mLabelXAxis);
@@ -150,6 +201,17 @@ namespace My05HydraReading
 			Called periodically. Retrieves Data from the Hydra and uses it.
 		**/
 		System::Void OnTimerTick(System::Object^  sender, System::EventArgs^  e);
+
+		AboutForm^ mAboutForm;
+		System::Void OnAboutClicked(System::Object^  sender, System::EventArgs^  e);
+
+		/** \brief Saves the current settings of a given controller to a given ini file.
+		**/
+		const bool SaveSettings(const std::wstring& filename, const bool left);
+
+		/** \brief Loads settings from an ini file and applies them to the given controller.
+		**/
+		const bool LoadSettings(const std::wstring& filename, const bool left);
 	};
 }
 

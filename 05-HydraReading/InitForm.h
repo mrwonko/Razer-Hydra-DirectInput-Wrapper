@@ -18,36 +18,28 @@ namespace My05HydraReading {
 	public ref class InitForm : public System::Windows::Forms::Form
 	{
 	public:
-		InitForm(void)
-		{
-			InitializeComponent();
-			//
-			//TODO: Konstruktorcode hier hinzufügen.
-			//
-		}
+		InitForm(void);
 
 	protected:
 		/// <summary>
 		/// Verwendete Ressourcen bereinigen.
 		/// </summary>
-		~InitForm()
-		{
-			if (components)
-			{
-				delete components;
-			}
-		}
-	private: System::Windows::Forms::ProgressBar^  progressBar;
-	private: System::Windows::Forms::Label^  baseSearchLabel;
-
-	private: System::Windows::Forms::Button^  okButton;
-	private: System::Windows::Forms::Label^  errorLabel;
+		~InitForm();
 
 	private:
+		//automatically generated objects
+
+		System::Windows::Forms::ProgressBar^  progressBar;
+		System::Windows::Forms::Label^  baseSearchLabel;
+		System::Windows::Forms::Button^  okButton;
+		System::Windows::Forms::Label^  errorLabel;
+
 		/// <summary>
 		/// Erforderliche Designervariable.
 		/// </summary>
 		System::ComponentModel::Container ^components;
+
+		/// \brief Timer for repeatedly trying to find the base
 		System::Windows::Forms::Timer^ mTimer;
 
 #pragma region Windows Form Designer generated code
@@ -125,63 +117,13 @@ namespace My05HydraReading {
 #pragma endregion
 
 	private:
-		System::Void Exit(System::Object^  sender, System::EventArgs^  e)
-		{
-			this->Close();
-			return;
-		 }
-
-		System::Void OnOpen(System::Object^  sender, System::EventArgs^  e) 
-		{
-			if(sixenseInit() != SIXENSE_SUCCESS)
-			{
-				this->Hide();
-				MessageBox::Show("Could not initalize Sixense SDK.", "Error", MessageBoxButtons::OK, MessageBoxIcon::Error);
-				this->Close();
-				return;
-			}
-			this->mTimer = gcnew System::Windows::Forms::Timer();
-			this->mTimer->Tick += gcnew System::EventHandler(this, &InitForm::OnTimerTick);
-			this->mTimer->Interval = 1000;
-			this->mTimer->Enabled = true;
-		}
-
-		System::Void OnTimerTick(System::Object^ sender, System::EventArgs^ e)
-		{
-			this->progressBar->PerformStep();
-			this->Refresh(); //redraw
-			bool foundBase = false;
-			for(int i = 0; i < sixenseGetMaxBases(); ++i)
-			{
-				if(sixenseIsBaseConnected(i))
-				{
-					foundBase = true;
-					break;
-				}
-			}
-#ifndef _DEBUG
-			if(foundBase)
-#endif
-			{
-				this->mTimer->Enabled = false;
-				this->Hide();
-				MainForm^ f = gcnew MainForm();
-				f->ShowDialog();
-				this->Close();
-				return;
-			}
-			//progress bar full? CJ, we're done here.
-			if(this->progressBar->Value == this->progressBar->Maximum)
-			{
-				this->mTimer->Enabled = false;
-				this->errorLabel->Visible = true;
-				this->okButton->Visible = true;
-			}
-		}
-	private:
-		System::Void OnClosed(System::Object^  sender, System::Windows::Forms::FormClosedEventArgs^  e)
-		{
-			sixenseExit();
-		}
+		/// \brief Closes the window, called by Error-OK button
+		System::Void Exit(System::Object^  sender, System::EventArgs^  e);
+		/// \brief Called once the window has been opened, initializes the Sixense SDK and the timer
+		System::Void OnOpen(System::Object^  sender, System::EventArgs^  e);
+		/// \brief Periodically called by the timer, looks for a Hydra base.
+		System::Void OnTimerTick(System::Object^ sender, System::EventArgs^ e);
+		/// \brief Called when the window has been closed. Exits the Sixense SDK.
+		System::Void OnClosed(System::Object^  sender, System::Windows::Forms::FormClosedEventArgs^  e);
 };
 }

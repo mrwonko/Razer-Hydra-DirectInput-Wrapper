@@ -13,11 +13,44 @@ namespace My05HydraReading
 			GetCurrentDirectory(MAX_PATH, dir);
 			return std::wstring(dir) + (left ? L"/settingsLeft.ini" :  L"/settingsRight.ini");
 		}
+
+		void InitJoystickComboBox(System::Windows::Forms::ComboBox^ box)
+		{
+			box->Items->Clear();
+			box->Items->Add("Joy 1");
+			box->Items->Add("Joy 2");
+			box->Items->Add("Joy 3");
+			box->Items->Add("Joy 4");
+			box->SelectedIndex = 0;
+		}
+
+		void InitButtonComboBox(System::Windows::Forms::ComboBox^ box)
+		{
+			box->Items->Clear();
+			box->Items->Add("Button 1");
+			box->Items->Add("Button 2");
+			box->Items->Add("Button 3");
+			box->Items->Add("Button 4");
+			box->Items->Add("Button 5");
+			box->Items->Add("Button 6");
+			box->Items->Add("Button 7");
+			box->Items->Add("Button 8");
+			box->Items->Add("Button 9");
+			box->Items->Add("Button 10");
+			box->Items->Add("Button 11");
+			box->Items->Add("Button 12");
+			box->Items->Add("Button 13");
+			box->Items->Add("Button 14");
+			box->Items->Add("Button 15");
+			box->Items->Add("Button 16");
+			box->SelectedIndex = 0;
+		}
 	}
 
 	MainForm::MainForm(void) :
 		mLeftControllerIndex(-1),
-		mRightControllerIndex(-1)
+		mRightControllerIndex(-1),
+		mInitialized(false)
 	{
 		InitializeComponent();
 	}
@@ -46,6 +79,8 @@ namespace My05HydraReading
 		this->mTimer->Interval = 16;
 		this->mTimer->Enabled = true;
 
+		//    Combo Box Initialization
+		
 		//let's prevent myself from screwing this up with the visual editor.
 		this->mControllerChoice->Items->Clear();
 		this->mControllerChoice->Items->Add("left controller");
@@ -53,11 +88,47 @@ namespace My05HydraReading
 		//for some reason I can't set this in the Visual Editor thingy.
 		this->mControllerChoice->SelectedIndex = 0; //0: left, 1: right
 
+		//  Buttons
+
+		//Button 1
+		InitJoystickComboBox(this->mButton1Joy);
+		InitButtonComboBox(this->mButton1Button);
+
+		//Button 2
+		InitJoystickComboBox(this->mButton2Joy);
+		InitButtonComboBox(this->mButton2Button);
+
+		//Button 3
+		InitJoystickComboBox(this->mButton3Joy);
+		InitButtonComboBox(this->mButton3Button);
+
+		//Button 4
+		InitJoystickComboBox(this->mButton4Joy);
+		InitButtonComboBox(this->mButton4Button);
+
+		//Joystick Button
+		InitJoystickComboBox(this->mButtonJoystickJoy);
+		InitButtonComboBox(this->mButtonJoystickButton);
+
+		//Start Button
+		InitJoystickComboBox(this->mButtonStartJoy);
+		InitButtonComboBox(this->mButtonStartButton);
+
+		//Bumper Button
+		InitJoystickComboBox(this->mButtonBumperJoy);
+		InitButtonComboBox(this->mButtonBumperButton);
+
+		
+		//has to be called after the other comboboxes have been set up, otherwise it might try to change an uninitialized combobox.
+		this->mControllerChoice->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::SelectedControllerChanged);
+		SelectedControllerChanged(sender, e); //force update
+
 		if(!LoadSettings(GetDefaultIniFilename(true), true) || !LoadSettings(GetDefaultIniFilename(false), false) )
 		{
 			Error("Could not load settings!");
 			return;
 		}
+		mInitialized = true;
 	}
 
 	void MainForm::Error(const std::string& message)
@@ -71,13 +142,72 @@ namespace My05HydraReading
 	void MainForm::DisplayBaseMessage(const bool display)
 	{
 		//ordinary stuff: hidden when base message displayed.
-		this->mLabelXAxis->Visible = !display;
-		this->mLabelXAxisValue->Visible = !display;
 		this->mControllerChoice->Visible = !display;
 		this->mSaveButton->Visible = !display;
 		this->mLoadButton->Visible = !display;
 		this->mOriginButton->Visible = !display;
 		this->mAboutButton->Visible = !display;
+
+		//  Buttons
+
+		this->mButtonsGroup->Visible = !display;
+		/*
+		//Button 1
+		this->mButton1Image->Visible = !display;
+		this->mButton1Label->Visible = !display;
+		this->mButton1Joy->Visible = !display;
+		this->mButton1Button->Visible = !display;
+
+		//Button 2
+		this->mButton2Image->Visible = !display;
+		this->mButton2Label->Visible = !display;
+		this->mButton2Joy->Visible = !display;
+		this->mButton2Button->Visible = !display;
+
+		//Button 3
+		this->mButton3Image->Visible = !display;
+		this->mButton3Label->Visible = !display;
+		this->mButton3Joy->Visible = !display;
+		this->mButton3Button->Visible = !display;
+
+		//Button 4
+		this->mButton4Image->Visible = !display;
+		this->mButton4Label->Visible = !display;
+		this->mButton4Joy->Visible = !display;
+		this->mButton4Button->Visible = !display;
+
+		//Start Button
+		this->mButtonStartImage->Visible = !display;
+		this->mButtonStartLabel->Visible = !display;
+		this->mButtonStartJoy->Visible = !display;
+		this->mButtonStartButton->Visible = !display;
+
+		//Joystick Button
+		this->mButtonJoystickImage->Visible = !display;
+		this->mButtonJoystickLabel->Visible = !display;
+		this->mButtonJoystickJoy->Visible = !display;
+		this->mButtonJoystickButton->Visible = !display;
+
+		//Bumper Button
+		this->mButtonBumperImage->Visible = !display;
+		this->mButtonBumperLabel->Visible = !display;
+		this->mButtonBumperJoy->Visible = !display;
+		this->mButtonBumperButton->Visible = !display;
+		*/
+
+		//  Axes
+		
+		this->mJoystickGroup->Visible = !display;
+		this->mPositionGroup->Visible = !display;
+		this->mRotationGroup->Visible = !display;
+
+		this->mTestGroup->Visible = !display;
+
+		//Test stuff, subject to deletion
+		this->mPressedButtonsLabel->Visible = !display;
+		this->mPressedButtonsDescLabel->Visible = !display;
+		this->mLabelXAxis->Visible = !display;
+		this->mLabelXAxisValue->Visible = !display;
 
 		//base message
 		this->mLabelBase->Visible = display;
@@ -189,17 +319,45 @@ namespace My05HydraReading
 			return;
 		}
 
-		static int i = 0;
-		std::stringstream ss;
-		//ss<<++i;
-		//ss<<mControllerChoice->SelectedIndex;
-		ss << data.pos[0];
-		this->mLabelXAxisValue->Text = gcnew String(ss.str().c_str());
+		{
+			static int i = 0;
+			std::stringstream ss;
+			//ss<<++i;
+			//ss<<mControllerChoice->SelectedIndex;
+			ss << data.pos[0];
+			this->mLabelXAxisValue->Text = gcnew String(ss.str().c_str());
+		}
+		{
+			std::stringstream ss;
+			if(data.buttons & SIXENSE_BUTTON_1) ss << "1 ";
+			if(data.buttons & SIXENSE_BUTTON_2) ss << "2 ";
+			if(data.buttons & SIXENSE_BUTTON_3) ss << "3 ";
+			if(data.buttons & SIXENSE_BUTTON_4) ss << "4 ";
+			if(data.buttons & SIXENSE_BUTTON_START) ss << "Start ";
+			if(data.buttons & SIXENSE_BUTTON_BUMPER) ss << "Bumper ";
+			if(data.buttons & SIXENSE_BUTTON_JOYSTICK) ss << "Joystick ";
+			this->mPressedButtonsLabel->Text = gcnew String(ss.str().c_str());
+		}
 	}
 
+	System::Void MainForm::UpdateBindings(System::Object^  sender, System::EventArgs^  e)
+	{
+		if(!mInitialized) return; //if this is called during initialization, it's because the initial values are set. We don't need to save those, in fact it'd probably cause bugs.
+
+		//TODO
+	}
+
+	System::Void MainForm::SelectedControllerChanged(System::Object^  sender, System::EventArgs^  e)
+	{
+		//do stuff with this->mControllerChoice->SelectedIndex;
+		
+		// TODO
+	}
 
 	const bool MainForm::SaveSettings(const std::wstring& filename, const bool left)
 	{
+		//TODO
+
 		if(!WritePrivateProfileString(L"section", L"key", L"value", filename.c_str()))
 		{
 			return false;
@@ -221,12 +379,9 @@ namespace My05HydraReading
 			DisplayBaseMessage(true);
 		}
 #endif
-		/*
-		std::wstringstream wss;
-		wss << buffer;
-		int somenumber;
-		wss >> somenumber;
-		*/
+
+		//TODO
+
 		return true;
 	}
 }

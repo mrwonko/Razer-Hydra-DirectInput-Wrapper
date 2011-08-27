@@ -84,6 +84,20 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="..\Debug\images\axis_x.png" />
+    <None Include="..\Debug\images\axis_y.png" />
+    <None Include="..\Debug\images\axis_z.png" />
+    <None Include="..\Debug\images\rot_pitch.png" />
+    <None Include="..\Debug\images\rot_roll.png" />
+    <None Include="..\Debug\images\rot_yaw.png" />
+    <None Include="..\Debug\images\side_axis_trigger.png" />
+    <None Include="..\Debug\images\side_bt_bumper.png" />
+    <None Include="..\Debug\images\top_bt_1.png" />
+    <None Include="..\Debug\images\top_bt_2.png" />
+    <None Include="..\Debug\images\top_bt_3.png" />
+    <None Include="..\Debug\images\top_bt_4.png" />
+    <None Include="..\Debug\images\top_bt_joystick.png" />
+    <None Include="..\Debug\images\top_bt_start.png" />
     <None Include="app.ico" />
     <None Include="ReadMe.txt" />
   </ItemGroup>

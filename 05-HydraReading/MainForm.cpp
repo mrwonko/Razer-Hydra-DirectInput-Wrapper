@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "MainForm.h"
-#ifdef _DEBUG
 #include <Windows.h>
-#endif
 #include <sstream>
 #include "ControllerMapping.h"
 

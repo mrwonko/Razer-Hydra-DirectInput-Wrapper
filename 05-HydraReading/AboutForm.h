@@ -50,8 +50,8 @@ namespace My05HydraReading
 			label1->Name = L"label1";
 			label1->Size = System::Drawing::Size(208, 78);
 			label1->TabIndex = 0;
-			label1->Text = L"Razer Hydra DirectInput Wrapper\r\n\r\nby Willi \"Mr. Wonko\" Schinmeyer\r\n\r\nUses PPJoy " 
-				L"by Deon van der Westhuysen\r\n ";
+			label1->Text = L"Razer Hydra DirectInput Wrapper 0.2\r\n\r\nby Willi \"Mr. Wonko\" Schinmeyer\r\n\r\nUses PP" 
+				L"Joy by Deon van der Westhuysen\r\n ";
 			// 
 			// linkLabel1
 			// 

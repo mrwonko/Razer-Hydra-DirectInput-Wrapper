@@ -14,6 +14,7 @@ namespace My05HydraReading
 			return std::wstring(dir) + (left ? L"/settingsLeft.ini" :  L"/settingsRight.ini");
 		}
 
+		// "Joy X" selection - width: 50
 		void InitJoystickComboBox(System::Windows::Forms::ComboBox^ box)
 		{
 			box->Items->Clear();
@@ -24,6 +25,7 @@ namespace My05HydraReading
 			box->SelectedIndex = 0;
 		}
 
+		// "Button X" selection - width: 70
 		void InitButtonComboBox(System::Windows::Forms::ComboBox^ box)
 		{
 			box->Items->Clear();
@@ -43,6 +45,29 @@ namespace My05HydraReading
 			box->Items->Add("Button 14");
 			box->Items->Add("Button 15");
 			box->Items->Add("Button 16");
+			box->SelectedIndex = 0;
+		}
+
+		// "Axis X" selection - width: ?
+		void InitAxisComboBox(System::Windows::Forms::ComboBox^ box)
+		{
+			box->Items->Clear();
+			box->Items->Add("Axis 1");
+			box->Items->Add("Axis 2");
+			box->Items->Add("Axis 3");
+			box->Items->Add("Axis 4");
+			box->Items->Add("Axis 5");
+			box->Items->Add("Axis 6");
+			box->Items->Add("Axis 7");
+			box->Items->Add("Axis 8");
+			box->Items->Add("Axis 9");
+			box->Items->Add("Axis 10");
+			box->Items->Add("Axis 11");
+			box->Items->Add("Axis 12");
+			box->Items->Add("Axis 13");
+			box->Items->Add("Axis 14");
+			box->Items->Add("Axis 15");
+			box->Items->Add("Axis 16");
 			box->SelectedIndex = 0;
 		}
 	}
@@ -118,6 +143,19 @@ namespace My05HydraReading
 		InitJoystickComboBox(this->mButtonBumperJoy);
 		InitButtonComboBox(this->mButtonBumperButton);
 
+		//  Axes
+
+		//X
+		InitJoystickComboBox(this->mAxisXJoy);
+		InitAxisComboBox(this->mAxisXAxis);
+		
+		//Y
+		InitJoystickComboBox(this->mAxisYJoy);
+		InitAxisComboBox(this->mAxisYAxis);
+
+		//Z
+		InitJoystickComboBox(this->mAxisZJoy);
+		InitAxisComboBox(this->mAxisZAxis);
 		
 		//has to be called after the other comboboxes have been set up, otherwise it might try to change an uninitialized combobox.
 		this->mControllerChoice->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::SelectedControllerChanged);

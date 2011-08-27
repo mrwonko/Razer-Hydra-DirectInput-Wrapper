@@ -117,14 +117,32 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="mLabelBase.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>True</value>
+  <metadata name="mLabelXAxis.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="mSaveButton.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="mLoadButton.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="mOriginButton.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="mAboutButton.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="mPressedButtonsDescLabel.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="mButton1Image.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
   </metadata>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
   <data name="mButton1Image.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACgAAAAyCAYAAAAus5mQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAACw0AAAsNAe0HwCwAAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfbCBsHDTsCr1z/
+        YQUAAAAJcEhZcwAACwwAAAsMAT9AIsgAAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfbCBsHDTsCr1z/
         AAAE0ElEQVRoQ81ZN08cQRQGIUAEIbKEhMggaNcdFT+AlpqSmpy5c6CwXdiWLdk9ovE/4B9QQG/LufBJ
         TgSB5YS9ft9q3+nt3k48IzzS6PZ2wvvmm5dmtqLCrwSVlZX5oaGhRy0tLS9pijCrNjc3v2hvb79DbTmq
         gZ8oh1GxsHB4ePhkbW3tay6XCw8PD6Oaz+fD+fn5cHJyMnrm9+izsrJySos5bmtre11dXX3DQaRd19bW
@@ -148,10 +166,13 @@
         J9VvFAJ6nrz/A6gAQNfU1JyR0hfgpqD8aEMfU3TwE/8fjPoL5dR8NwVjnC4AAAAASUVORK5CYII=
 </value>
   </data>
+  <metadata name="mButton2Image.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
   <data name="mButton2Image.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACgAAAAyCAYAAAAus5mQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAACw0AAAsNAe0HwCwAAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfbCBsHDinaO350
+        YQUAAAAJcEhZcwAACwwAAAsMAT9AIsgAAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfbCBsHDinaO350
         AAAE0ElEQVRoQ81ZuU4cQRAFIUAcQtzSSogbBOk4I+IDSIkJiblvdn0FtgPbsiU7RyT8AX9AwOa2fAde
         yReHwPKFPe43mhrV9kyfa4RHGu3s9FGvq6teVddUVfldQXV1dWF4ePhxW1vbSzFFmHW3tra+6OzsvCva
         8uIO/EQ5jIqFhSMjIyfr6+tf8/l8WCwWo7tQKIQLCwvh1NRU9Ezv0Wd1dfVULOa4o6PjdW1t7Q0HkXZd
@@ -175,10 +196,13 @@
         n1S/UQjoBcH+D2ECAF1XV3cmjL4EmoLxow19TNHBT/x/MOov7jp5p0SIDlkAAAAASUVORK5CYII=
 </value>
   </data>
+  <metadata name="mButton3Image.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
   <data name="mButton3Image.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACgAAAAyCAYAAAAus5mQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAACw0AAAsNAe0HwCwAAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfbCBsHDRHZFJUp
+        YQUAAAAJcEhZcwAACwwAAAsMAT9AIsgAAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfbCBsHDRHZFJUp
         AAAEy0lEQVRoQ81ZuU4cQRAFIUAcQtwSEuIGQTrOiPgAUmJCYu6bXV+B7cC2bMnOEQl/wB8QQG7Ld+CV
         fHEILF/Y43qjqVHtbB/TvVi4pdbOTld3va6us6eiwq8FlZWV+aGhocctLS0vaYlQ1Zubm1+0t7ffpbEc
         9cCPlcOsmFk4PDx8sra29jWXy4WHh4dRz+fz4fz8fDg5ORk983vQrKysnNJmjtva2l5XV1ffcGCZjbS1
@@ -202,37 +226,13 @@
         nifv/xAqANA1NTVnpPQFuCkoP8ZAY4sOfuz/g1l/Aed3eKeIm26GAAAAAElFTkSuQmCC
 </value>
   </data>
-  <data name="mButton4Image.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
-    <value>
-        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
-</value>
-  </data>
+  <metadata name="mButtonBumperImage.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
   <data name="mButtonBumperImage.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACgAAAAyCAYAAAAus5mQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAACw0AAAsNAe0HwCwAAAAGYktHRAAAAAAAAPlDu38AAAAHdElNRQfbCBsHFx+OgUL1
+        YQUAAAAJcEhZcwAACwwAAAsMAT9AIsgAAAAGYktHRAAAAAAAAPlDu38AAAAHdElNRQfbCBsHFx+OgUL1
         AAADW0lEQVRoQ+2Yy0sbQRzH90HihkiiMTF6MWhiEgl42Ft78O/w6MEHeNMEhUZN2iotPfUBpe2xUCi5
         9C8opX9AKPTSd7WFvhRNWyz12e3vu2TCJibZxGwzQndgmNWdzHz295rfbwTBbrYEbAnYErAlYEvgrEhA
         JZBMV1fXVY/H88rr9b4eGhq6JUnSU66Asixf7OnpeR8Oh3cWFhZ2MpmMls/n9Y7ngYGBY4K9zwXS7Xa/
@@ -250,10 +250,13 @@
         e4gQx2HvxrcMhULnGp9tz7Ql8J9K4C89WN40T+jJVQAAAABJRU5ErkJggg==
 </value>
   </data>
+  <metadata name="mButtonJoystickImage.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
   <data name="mButtonJoystickImage.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACgAAAAyCAYAAAAus5mQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAACw0AAAsNAe0HwCwAAAAGYktHRAAAAAAAAPlDu38AAAAHdElNRQfbCBsHDCCR0aRS
+        YQUAAAAJcEhZcwAACwwAAAsMAT9AIsgAAAAGYktHRAAAAAAAAPlDu38AAAAHdElNRQfbCBsHDCCR0aRS
         AAAE/UlEQVRoQ81ZyU4kRxAFIUAsQuwSEmIHwbXmxqk/gCtnjn2GZt+6PfYcbB/Glkey74gLf8AfcIC7
         LS8zc5iWvLEIkO0Z7HK8nIp2VnVGZmWCjUtK0VQu8TIi40VEVkND2BM1NjZWpqamXvT09HxHS8Sm1t3d
         /W1/f/8n1FemFoWJ8piVCIunp6cvt7e3b8vlcnx2dqZapVKJS6VSvLCwoH7ze4zZ3Ny8os1c9PX1/dDc
@@ -278,10 +281,13 @@
         Wq7p0FdBUzj86MMYV3QIE/8/mPU3LRZR4J+LF1UAAAAASUVORK5CYII=
 </value>
   </data>
+  <metadata name="mButtonStartImage.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
   <data name="mButtonStartImage.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACgAAAAyCAYAAAAus5mQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAACw0AAAsNAe0HwCwAAAAGYktHRAAAAAAAAPlDu38AAAAHdElNRQfbCBsHECUHzA2A
+        YQUAAAAJcEhZcwAACwwAAAsMAT9AIsgAAAAGYktHRAAAAAAAAPlDu38AAAAHdElNRQfbCBsHECUHzA2A
         AAAEyklEQVRoQ81ZOU8bQRTGQoA4hLglJGRuy7SbLhU/gJaa0jX3jZ2DIkmRRImU9IiGf8A/oMB9otxF
         LOXiEES5SDbzrfat3q53TgeRkUZe77yZ982bd83bujq35mUymdLY2Njjzs7Ol2IJP613dHS86OnpuSvG
         iqJ7bqwsZoXM/PHx8ZO1tbWvxWLRL5fLQS+VSv78/Lw/NTUVPNN70KysrJyKzRx3d3e/bmhouGnB0oy0
@@ -305,10 +311,34 @@
         JeH9H0IFALqxsfFMKH0FbgrKjzHQ6KKDG/v/YNZfygmRoWBhu+YAAAAASUVORK5CYII=
 </value>
   </data>
+  <metadata name="mButton1Label.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="mButton2Label.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="mButton3Label.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="mButton4Label.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="mButtonJoystickLabel.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="mButtonStartLabel.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="mButtonBumperLabel.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="mJoystickXImage.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
   <data name="mJoystickXImage.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACgAAAAyCAYAAAAus5mQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAACxAAAAsQAa0jvXUAAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfbCBsHHBNkw9cV
+        YQUAAAAJcEhZcwAACw4AAAsOAUC+4UEAAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfbCBsHHBNkw9cV
         AAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAALxJREFUaEPtlksOgCAMBbn/pTUQ
         UUDB8mnoYtjowjzHqdA6x8IABjCAAQxgAAMYMGDgMMBQRfBwGoBLMiPckrBCwfSHhwC/FA0OZ99wmoBJ
         dleFMrgiJC359H0oz1MhEeQLLoZoX6/fqAm5DU5icjtcC9IMXA3SPKA/P81AtjbLdkjTO1kCF1ul6YP6
@@ -316,4 +346,40 @@
         AElFTkSuQmCC
 </value>
   </data>
+  <metadata name="mJoystickXGroup.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="mButton4Image.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="mButton4Image.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        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
+</value>
+  </data>
+  <metadata name="mLabelBase.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
 </root>

@@ -142,72 +142,13 @@ namespace My05HydraReading
 	void MainForm::DisplayBaseMessage(const bool display)
 	{
 		//ordinary stuff: hidden when base message displayed.
-		this->mControllerChoice->Visible = !display;
-		this->mSaveButton->Visible = !display;
-		this->mLoadButton->Visible = !display;
-		this->mOriginButton->Visible = !display;
-		this->mAboutButton->Visible = !display;
-
-		//  Buttons
-
+		this->mControlGroup->Visible = !display;
 		this->mButtonsGroup->Visible = !display;
-		/*
-		//Button 1
-		this->mButton1Image->Visible = !display;
-		this->mButton1Label->Visible = !display;
-		this->mButton1Joy->Visible = !display;
-		this->mButton1Button->Visible = !display;
-
-		//Button 2
-		this->mButton2Image->Visible = !display;
-		this->mButton2Label->Visible = !display;
-		this->mButton2Joy->Visible = !display;
-		this->mButton2Button->Visible = !display;
-
-		//Button 3
-		this->mButton3Image->Visible = !display;
-		this->mButton3Label->Visible = !display;
-		this->mButton3Joy->Visible = !display;
-		this->mButton3Button->Visible = !display;
-
-		//Button 4
-		this->mButton4Image->Visible = !display;
-		this->mButton4Label->Visible = !display;
-		this->mButton4Joy->Visible = !display;
-		this->mButton4Button->Visible = !display;
-
-		//Start Button
-		this->mButtonStartImage->Visible = !display;
-		this->mButtonStartLabel->Visible = !display;
-		this->mButtonStartJoy->Visible = !display;
-		this->mButtonStartButton->Visible = !display;
-
-		//Joystick Button
-		this->mButtonJoystickImage->Visible = !display;
-		this->mButtonJoystickLabel->Visible = !display;
-		this->mButtonJoystickJoy->Visible = !display;
-		this->mButtonJoystickButton->Visible = !display;
-
-		//Bumper Button
-		this->mButtonBumperImage->Visible = !display;
-		this->mButtonBumperLabel->Visible = !display;
-		this->mButtonBumperJoy->Visible = !display;
-		this->mButtonBumperButton->Visible = !display;
-		*/
-
-		//  Axes
-		
 		this->mJoystickGroup->Visible = !display;
 		this->mPositionGroup->Visible = !display;
 		this->mRotationGroup->Visible = !display;
 
 		this->mTestGroup->Visible = !display;
-
-		//Test stuff, subject to deletion
-		this->mPressedButtonsLabel->Visible = !display;
-		this->mPressedButtonsDescLabel->Visible = !display;
-		this->mLabelXAxis->Visible = !display;
-		this->mLabelXAxisValue->Visible = !display;
 
 		//base message
 		this->mLabelBase->Visible = display;

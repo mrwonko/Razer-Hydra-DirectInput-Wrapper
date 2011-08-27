@@ -7,6 +7,8 @@
 #include <sixense.h>
 #include "AboutForm.h"
 
+struct ControllerMapping;
+
 namespace My05HydraReading
 {
 
@@ -30,6 +32,7 @@ namespace My05HydraReading
 		/// Verwendete Ressourcen bereinigen.
 		/// </summary>
 		~MainForm();
+		!MainForm();
 
 	private:
 		
@@ -53,26 +56,27 @@ namespace My05HydraReading
 		System::Windows::Forms::ComboBox^  mButton1Joy;
 		System::Windows::Forms::ComboBox^  mButton1Button;
 		//2
-		System::Windows::Forms::ComboBox^  mButton2Button;
 		System::Windows::Forms::ComboBox^  mButton2Joy;
+		System::Windows::Forms::ComboBox^  mButton2Button;
 		//3
-		System::Windows::Forms::ComboBox^  mButton3Button;
 		System::Windows::Forms::ComboBox^  mButton3Joy;
+		System::Windows::Forms::ComboBox^  mButton3Button;
 		//4
-		System::Windows::Forms::ComboBox^  mButton4Button;
 		System::Windows::Forms::ComboBox^  mButton4Joy;
+		System::Windows::Forms::ComboBox^  mButton4Button;
 		//Analog Stick
-		System::Windows::Forms::ComboBox^  mButtonJoystickButton;
 		System::Windows::Forms::ComboBox^  mButtonJoystickJoy;
+		System::Windows::Forms::ComboBox^  mButtonJoystickButton;
 		//Start
-		System::Windows::Forms::ComboBox^  mButtonStartButton;
 		System::Windows::Forms::ComboBox^  mButtonStartJoy;
+		System::Windows::Forms::ComboBox^  mButtonStartButton;
 		//Bumper
-		System::Windows::Forms::ComboBox^  mButtonBumperButton;
 		System::Windows::Forms::ComboBox^  mButtonBumperJoy;
+		System::Windows::Forms::ComboBox^  mButtonBumperButton;
 		
 		//  Analog Stick X
 		System::Windows::Forms::RadioButton^	mJoystickXTypeAxis;
+		System::Windows::Forms::RadioButton^	mJoystickXTypeButtons;
 		System::Windows::Forms::ComboBox^		mJoystickXAxisJoy;
 		System::Windows::Forms::ComboBox^		mJoystickXAxisAxis;
 		System::Windows::Forms::ComboBox^		mJoystickXButtonMinJoy;
@@ -82,6 +86,7 @@ namespace My05HydraReading
 
 		//  Analog Stick Y
 		System::Windows::Forms::RadioButton^	mJoystickYTypeAxis;
+		System::Windows::Forms::RadioButton^	mJoystickYTypeButtons;
 		System::Windows::Forms::ComboBox^		mJoystickYAxisJoy;
 		System::Windows::Forms::ComboBox^		mJoystickYAxisAxis;
 		System::Windows::Forms::ComboBox^		mJoystickYButtonMinJoy;
@@ -91,6 +96,7 @@ namespace My05HydraReading
 
 		//  Trigger
 		System::Windows::Forms::RadioButton^	mTriggerTypeAxis;
+		System::Windows::Forms::RadioButton^	mTriggerTypeButton;
 		System::Windows::Forms::ComboBox^		mTriggerJoy;
 		System::Windows::Forms::ComboBox^		mTriggerAxis;
 		System::Windows::Forms::ComboBox^		mTriggerButton;
@@ -135,7 +141,7 @@ namespace My05HydraReading
 		System::Windows::Forms::GroupBox^  mJoystickGroup;
 		System::Windows::Forms::GroupBox^  mControlGroup;
 		System::Windows::Forms::GroupBox^  mRotationGroup;
-		System::Windows::Forms::GroupBox^  mTriggerGroup;
+		 System::Windows::Forms::GroupBox^  mTriggerGroup;
 		
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -165,7 +171,6 @@ namespace My05HydraReading
 			System::Windows::Forms::Label^  mButtonBumperLabel;
 			System::Windows::Forms::PictureBox^  mJoystickXImage;
 			System::Windows::Forms::GroupBox^  mJoystickXGroup;
-			System::Windows::Forms::RadioButton^  mJoystickXTypeButtons;
 			System::Windows::Forms::Label^  label14;
 			System::Windows::Forms::Label^  label13;
 			System::Windows::Forms::PictureBox^  mButton4Image;
@@ -189,13 +194,12 @@ namespace My05HydraReading
 			System::Windows::Forms::Label^  label12;
 			System::Windows::Forms::ToolTip^  ToolTip;
 			System::Windows::Forms::GroupBox^  groupBox1;
-			System::Windows::Forms::RadioButton^  mJoystickYTypeButtons;
 			System::Windows::Forms::PictureBox^  pictureBox7;
 			System::Windows::Forms::Label^  label15;
 			System::Windows::Forms::Label^  label16;
 			System::Windows::Forms::PictureBox^  pictureBox8;
-			System::Windows::Forms::RadioButton^  radioButton1;
 			this->mJoystickXTypeAxis = (gcnew System::Windows::Forms::RadioButton());
+			this->mJoystickXTypeButtons = (gcnew System::Windows::Forms::RadioButton());
 			this->mJoystickXAxisAxis = (gcnew System::Windows::Forms::ComboBox());
 			this->mJoystickXAxisJoy = (gcnew System::Windows::Forms::ComboBox());
 			this->mJoystickXButtonMinButton = (gcnew System::Windows::Forms::ComboBox());
@@ -235,12 +239,14 @@ namespace My05HydraReading
 			this->mAxisPitchInvert = (gcnew System::Windows::Forms::CheckBox());
 			this->mAxisYawInvert = (gcnew System::Windows::Forms::CheckBox());
 			this->mJoystickYTypeAxis = (gcnew System::Windows::Forms::RadioButton());
+			this->mJoystickYTypeButtons = (gcnew System::Windows::Forms::RadioButton());
 			this->mJoystickYAxisAxis = (gcnew System::Windows::Forms::ComboBox());
 			this->mJoystickYAxisJoy = (gcnew System::Windows::Forms::ComboBox());
 			this->mJoystickYButtonMinButton = (gcnew System::Windows::Forms::ComboBox());
 			this->mJoystickYButtonMaxButton = (gcnew System::Windows::Forms::ComboBox());
 			this->mJoystickYButtonMinJoy = (gcnew System::Windows::Forms::ComboBox());
 			this->mJoystickYButtonMaxJoy = (gcnew System::Windows::Forms::ComboBox());
+			this->mTriggerTypeButton = (gcnew System::Windows::Forms::RadioButton());
 			this->mLabelBase = (gcnew System::Windows::Forms::Label());
 			this->mButton1Button = (gcnew System::Windows::Forms::ComboBox());
 			this->mButton2Button = (gcnew System::Windows::Forms::ComboBox());
@@ -256,9 +262,9 @@ namespace My05HydraReading
 			this->mRotationGroup = (gcnew System::Windows::Forms::GroupBox());
 			this->mTriggerGroup = (gcnew System::Windows::Forms::GroupBox());
 			this->mTriggerTypeAxis = (gcnew System::Windows::Forms::RadioButton());
-			this->mTriggerButton = (gcnew System::Windows::Forms::ComboBox());
-			this->mTriggerJoy = (gcnew System::Windows::Forms::ComboBox());
 			this->mTriggerAxis = (gcnew System::Windows::Forms::ComboBox());
+			this->mTriggerJoy = (gcnew System::Windows::Forms::ComboBox());
+			this->mTriggerButton = (gcnew System::Windows::Forms::ComboBox());
 			mSaveButton = (gcnew System::Windows::Forms::Button());
 			mLoadButton = (gcnew System::Windows::Forms::Button());
 			mOriginButton = (gcnew System::Windows::Forms::Button());
@@ -278,7 +284,6 @@ namespace My05HydraReading
 			mButtonBumperLabel = (gcnew System::Windows::Forms::Label());
 			mJoystickXImage = (gcnew System::Windows::Forms::PictureBox());
 			mJoystickXGroup = (gcnew System::Windows::Forms::GroupBox());
-			mJoystickXTypeButtons = (gcnew System::Windows::Forms::RadioButton());
 			label14 = (gcnew System::Windows::Forms::Label());
 			label13 = (gcnew System::Windows::Forms::Label());
 			mButton4Image = (gcnew System::Windows::Forms::PictureBox());
@@ -302,12 +307,10 @@ namespace My05HydraReading
 			label12 = (gcnew System::Windows::Forms::Label());
 			ToolTip = (gcnew System::Windows::Forms::ToolTip(this->components));
 			groupBox1 = (gcnew System::Windows::Forms::GroupBox());
-			mJoystickYTypeButtons = (gcnew System::Windows::Forms::RadioButton());
 			pictureBox7 = (gcnew System::Windows::Forms::PictureBox());
 			label15 = (gcnew System::Windows::Forms::Label());
 			label16 = (gcnew System::Windows::Forms::Label());
 			pictureBox8 = (gcnew System::Windows::Forms::PictureBox());
-			radioButton1 = (gcnew System::Windows::Forms::RadioButton());
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(mButton1Image))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(mButton2Image))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(mButton3Image))->BeginInit();
@@ -331,13 +334,13 @@ namespace My05HydraReading
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mAxisYawRange))->BeginInit();
 			groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(pictureBox7))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(pictureBox8))->BeginInit();
 			this->mPositionGroup->SuspendLayout();
 			this->mButtonsGroup->SuspendLayout();
 			this->mJoystickGroup->SuspendLayout();
 			this->mControlGroup->SuspendLayout();
 			this->mRotationGroup->SuspendLayout();
 			this->mTriggerGroup->SuspendLayout();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(pictureBox8))->BeginInit();
 			this->SuspendLayout();
 			// 
 			// mSaveButton
@@ -345,7 +348,7 @@ namespace My05HydraReading
 			mSaveButton->Location = System::Drawing::Point(139, 19);
 			mSaveButton->Name = L"mSaveButton";
 			mSaveButton->Size = System::Drawing::Size(50, 23);
-			mSaveButton->TabIndex = 3;
+			mSaveButton->TabIndex = 1;
 			mSaveButton->Text = L"Save";
 			ToolTip->SetToolTip(mSaveButton, L"Saves the layout of the current controller (not both!) to a file.");
 			mSaveButton->UseVisualStyleBackColor = true;
@@ -355,7 +358,7 @@ namespace My05HydraReading
 			mLoadButton->Location = System::Drawing::Point(195, 19);
 			mLoadButton->Name = L"mLoadButton";
 			mLoadButton->Size = System::Drawing::Size(50, 23);
-			mLoadButton->TabIndex = 4;
+			mLoadButton->TabIndex = 2;
 			mLoadButton->Text = L"Load";
 			ToolTip->SetToolTip(mLoadButton, L"Loads the layout of the current controller (not both!) from a file.");
 			mLoadButton->UseVisualStyleBackColor = true;
@@ -365,7 +368,7 @@ namespace My05HydraReading
 			mOriginButton->Location = System::Drawing::Point(251, 19);
 			mOriginButton->Name = L"mOriginButton";
 			mOriginButton->Size = System::Drawing::Size(75, 23);
-			mOriginButton->TabIndex = 5;
+			mOriginButton->TabIndex = 3;
 			mOriginButton->Text = L"Set Origin";
 			ToolTip->SetToolTip(mOriginButton, L"Sets the origin of the current controller, i.e. the point at which the position a" 
 				L"xes are in the middle position.");
@@ -376,7 +379,7 @@ namespace My05HydraReading
 			mAboutButton->Location = System::Drawing::Point(519, 19);
 			mAboutButton->Name = L"mAboutButton";
 			mAboutButton->Size = System::Drawing::Size(46, 23);
-			mAboutButton->TabIndex = 6;
+			mAboutButton->TabIndex = 4;
 			mAboutButton->Text = L"About";
 			mAboutButton->UseVisualStyleBackColor = true;
 			mAboutButton->Click += gcnew System::EventHandler(this, &MainForm::OnAboutClicked);
@@ -511,7 +514,7 @@ namespace My05HydraReading
 			// mJoystickXGroup
 			// 
 			mJoystickXGroup->Controls->Add(this->mJoystickXTypeAxis);
-			mJoystickXGroup->Controls->Add(mJoystickXTypeButtons);
+			mJoystickXGroup->Controls->Add(this->mJoystickXTypeButtons);
 			mJoystickXGroup->Controls->Add(this->mJoystickXAxisAxis);
 			mJoystickXGroup->Controls->Add(this->mJoystickXAxisJoy);
 			mJoystickXGroup->Controls->Add(this->mJoystickXButtonMinButton);
@@ -524,7 +527,7 @@ namespace My05HydraReading
 			mJoystickXGroup->Location = System::Drawing::Point(6, 19);
 			mJoystickXGroup->Name = L"mJoystickXGroup";
 			mJoystickXGroup->Size = System::Drawing::Size(180, 143);
-			mJoystickXGroup->TabIndex = 44;
+			mJoystickXGroup->TabIndex = 24;
 			mJoystickXGroup->TabStop = false;
 			mJoystickXGroup->Text = L"X Axis";
 			// 
@@ -535,7 +538,7 @@ namespace My05HydraReading
 			this->mJoystickXTypeAxis->Location = System::Drawing::Point(52, 19);
 			this->mJoystickXTypeAxis->Name = L"mJoystickXTypeAxis";
 			this->mJoystickXTypeAxis->Size = System::Drawing::Size(44, 17);
-			this->mJoystickXTypeAxis->TabIndex = 42;
+			this->mJoystickXTypeAxis->TabIndex = 24;
 			this->mJoystickXTypeAxis->TabStop = true;
 			this->mJoystickXTypeAxis->Text = L"Axis";
 			this->mJoystickXTypeAxis->UseVisualStyleBackColor = true;
@@ -543,13 +546,13 @@ namespace My05HydraReading
 			// 
 			// mJoystickXTypeButtons
 			// 
-			mJoystickXTypeButtons->AutoSize = true;
-			mJoystickXTypeButtons->Location = System::Drawing::Point(102, 20);
-			mJoystickXTypeButtons->Name = L"mJoystickXTypeButtons";
-			mJoystickXTypeButtons->Size = System::Drawing::Size(61, 17);
-			mJoystickXTypeButtons->TabIndex = 43;
-			mJoystickXTypeButtons->Text = L"Buttons";
-			mJoystickXTypeButtons->UseVisualStyleBackColor = true;
+			this->mJoystickXTypeButtons->AutoSize = true;
+			this->mJoystickXTypeButtons->Location = System::Drawing::Point(102, 19);
+			this->mJoystickXTypeButtons->Name = L"mJoystickXTypeButtons";
+			this->mJoystickXTypeButtons->Size = System::Drawing::Size(61, 17);
+			this->mJoystickXTypeButtons->TabIndex = 25;
+			this->mJoystickXTypeButtons->Text = L"Buttons";
+			this->mJoystickXTypeButtons->UseVisualStyleBackColor = true;
 			// 
 			// mJoystickXAxisAxis
 			// 
@@ -558,7 +561,8 @@ namespace My05HydraReading
 			this->mJoystickXAxisAxis->Location = System::Drawing::Point(104, 58);
 			this->mJoystickXAxisAxis->Name = L"mJoystickXAxisAxis";
 			this->mJoystickXAxisAxis->Size = System::Drawing::Size(70, 21);
-			this->mJoystickXAxisAxis->TabIndex = 39;
+			this->mJoystickXAxisAxis->TabIndex = 27;
+			ToolTip->SetToolTip(this->mJoystickXAxisAxis, L"The desired Axis. Not all games support axes 7 and 8, even less axes 9 and up.");
 			this->mJoystickXAxisAxis->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mJoystickXAxisJoy
@@ -568,7 +572,7 @@ namespace My05HydraReading
 			this->mJoystickXAxisJoy->Location = System::Drawing::Point(48, 58);
 			this->mJoystickXAxisJoy->Name = L"mJoystickXAxisJoy";
 			this->mJoystickXAxisJoy->Size = System::Drawing::Size(50, 21);
-			this->mJoystickXAxisJoy->TabIndex = 38;
+			this->mJoystickXAxisJoy->TabIndex = 26;
 			this->mJoystickXAxisJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mJoystickXButtonMinButton
@@ -579,7 +583,7 @@ namespace My05HydraReading
 			this->mJoystickXButtonMinButton->Location = System::Drawing::Point(104, 85);
 			this->mJoystickXButtonMinButton->Name = L"mJoystickXButtonMinButton";
 			this->mJoystickXButtonMinButton->Size = System::Drawing::Size(70, 21);
-			this->mJoystickXButtonMinButton->TabIndex = 25;
+			this->mJoystickXButtonMinButton->TabIndex = 29;
 			this->mJoystickXButtonMinButton->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mJoystickXButtonMaxButton
@@ -590,7 +594,7 @@ namespace My05HydraReading
 			this->mJoystickXButtonMaxButton->Location = System::Drawing::Point(104, 112);
 			this->mJoystickXButtonMaxButton->Name = L"mJoystickXButtonMaxButton";
 			this->mJoystickXButtonMaxButton->Size = System::Drawing::Size(70, 21);
-			this->mJoystickXButtonMaxButton->TabIndex = 25;
+			this->mJoystickXButtonMaxButton->TabIndex = 31;
 			this->mJoystickXButtonMaxButton->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mJoystickXButtonMinJoy
@@ -601,7 +605,7 @@ namespace My05HydraReading
 			this->mJoystickXButtonMinJoy->Location = System::Drawing::Point(48, 85);
 			this->mJoystickXButtonMinJoy->Name = L"mJoystickXButtonMinJoy";
 			this->mJoystickXButtonMinJoy->Size = System::Drawing::Size(50, 21);
-			this->mJoystickXButtonMinJoy->TabIndex = 24;
+			this->mJoystickXButtonMinJoy->TabIndex = 28;
 			this->mJoystickXButtonMinJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mJoystickXButtonMaxJoy
@@ -612,7 +616,7 @@ namespace My05HydraReading
 			this->mJoystickXButtonMaxJoy->Location = System::Drawing::Point(48, 112);
 			this->mJoystickXButtonMaxJoy->Name = L"mJoystickXButtonMaxJoy";
 			this->mJoystickXButtonMaxJoy->Size = System::Drawing::Size(50, 21);
-			this->mJoystickXButtonMaxJoy->TabIndex = 24;
+			this->mJoystickXButtonMaxJoy->TabIndex = 30;
 			this->mJoystickXButtonMaxJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// label14
@@ -846,7 +850,7 @@ namespace My05HydraReading
 			this->mButton1Joy->Location = System::Drawing::Point(52, 35);
 			this->mButton1Joy->Name = L"mButton1Joy";
 			this->mButton1Joy->Size = System::Drawing::Size(50, 21);
-			this->mButton1Joy->TabIndex = 24;
+			this->mButton1Joy->TabIndex = 5;
 			ToolTip->SetToolTip(this->mButton1Joy, L"The virtual joystick to which this input is mapped.");
 			this->mButton1Joy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
@@ -857,7 +861,7 @@ namespace My05HydraReading
 			this->mButton2Joy->Location = System::Drawing::Point(52, 91);
 			this->mButton2Joy->Name = L"mButton2Joy";
 			this->mButton2Joy->Size = System::Drawing::Size(50, 21);
-			this->mButton2Joy->TabIndex = 26;
+			this->mButton2Joy->TabIndex = 7;
 			ToolTip->SetToolTip(this->mButton2Joy, L"The virtual joystick to which this input is mapped.");
 			this->mButton2Joy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
@@ -868,7 +872,7 @@ namespace My05HydraReading
 			this->mButton3Joy->Location = System::Drawing::Point(52, 147);
 			this->mButton3Joy->Name = L"mButton3Joy";
 			this->mButton3Joy->Size = System::Drawing::Size(50, 21);
-			this->mButton3Joy->TabIndex = 28;
+			this->mButton3Joy->TabIndex = 9;
 			ToolTip->SetToolTip(this->mButton3Joy, L"The virtual joystick to which this input is mapped.");
 			this->mButton3Joy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
@@ -879,7 +883,7 @@ namespace My05HydraReading
 			this->mButton4Joy->Location = System::Drawing::Point(52, 203);
 			this->mButton4Joy->Name = L"mButton4Joy";
 			this->mButton4Joy->Size = System::Drawing::Size(50, 21);
-			this->mButton4Joy->TabIndex = 30;
+			this->mButton4Joy->TabIndex = 11;
 			ToolTip->SetToolTip(this->mButton4Joy, L"The virtual joystick to which this input is mapped.");
 			this->mButton4Joy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
@@ -890,7 +894,7 @@ namespace My05HydraReading
 			this->mButtonJoystickJoy->Location = System::Drawing::Point(52, 259);
 			this->mButtonJoystickJoy->Name = L"mButtonJoystickJoy";
 			this->mButtonJoystickJoy->Size = System::Drawing::Size(50, 21);
-			this->mButtonJoystickJoy->TabIndex = 32;
+			this->mButtonJoystickJoy->TabIndex = 13;
 			ToolTip->SetToolTip(this->mButtonJoystickJoy, L"The virtual joystick to which this input is mapped.");
 			this->mButtonJoystickJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
@@ -901,7 +905,7 @@ namespace My05HydraReading
 			this->mButtonStartJoy->Location = System::Drawing::Point(52, 315);
 			this->mButtonStartJoy->Name = L"mButtonStartJoy";
 			this->mButtonStartJoy->Size = System::Drawing::Size(50, 21);
-			this->mButtonStartJoy->TabIndex = 34;
+			this->mButtonStartJoy->TabIndex = 15;
 			ToolTip->SetToolTip(this->mButtonStartJoy, L"The virtual joystick to which this input is mapped.");
 			this->mButtonStartJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
@@ -912,7 +916,7 @@ namespace My05HydraReading
 			this->mButtonBumperJoy->Location = System::Drawing::Point(52, 371);
 			this->mButtonBumperJoy->Name = L"mButtonBumperJoy";
 			this->mButtonBumperJoy->Size = System::Drawing::Size(50, 21);
-			this->mButtonBumperJoy->TabIndex = 36;
+			this->mButtonBumperJoy->TabIndex = 17;
 			ToolTip->SetToolTip(this->mButtonBumperJoy, L"The virtual joystick to which this input is mapped.");
 			this->mButtonBumperJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
@@ -923,7 +927,7 @@ namespace My05HydraReading
 			this->mAxisZJoy->Location = System::Drawing::Point(52, 194);
 			this->mAxisZJoy->Name = L"mAxisZJoy";
 			this->mAxisZJoy->Size = System::Drawing::Size(50, 21);
-			this->mAxisZJoy->TabIndex = 38;
+			this->mAxisZJoy->TabIndex = 49;
 			ToolTip->SetToolTip(this->mAxisZJoy, L"The virtual joystick to which this input is mapped.");
 			this->mAxisZJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
@@ -934,7 +938,7 @@ namespace My05HydraReading
 			this->mAxisYJoy->Location = System::Drawing::Point(52, 118);
 			this->mAxisYJoy->Name = L"mAxisYJoy";
 			this->mAxisYJoy->Size = System::Drawing::Size(50, 21);
-			this->mAxisYJoy->TabIndex = 38;
+			this->mAxisYJoy->TabIndex = 45;
 			ToolTip->SetToolTip(this->mAxisYJoy, L"The virtual joystick to which this input is mapped.");
 			this->mAxisYJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
@@ -945,8 +949,8 @@ namespace My05HydraReading
 			this->mAxisZAxis->Location = System::Drawing::Point(108, 194);
 			this->mAxisZAxis->Name = L"mAxisZAxis";
 			this->mAxisZAxis->Size = System::Drawing::Size(70, 21);
-			this->mAxisZAxis->TabIndex = 39;
-			ToolTip->SetToolTip(this->mAxisZAxis, L"The axis of the virtual joystick to which this input is mapped.");
+			this->mAxisZAxis->TabIndex = 50;
+			ToolTip->SetToolTip(this->mAxisZAxis, L"The desired Axis. Not all games support axes 7 and 8, even less axes 9 and up.");
 			this->mAxisZAxis->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mAxisXJoy
@@ -956,7 +960,7 @@ namespace My05HydraReading
 			this->mAxisXJoy->Location = System::Drawing::Point(52, 42);
 			this->mAxisXJoy->Name = L"mAxisXJoy";
 			this->mAxisXJoy->Size = System::Drawing::Size(50, 21);
-			this->mAxisXJoy->TabIndex = 38;
+			this->mAxisXJoy->TabIndex = 41;
 			ToolTip->SetToolTip(this->mAxisXJoy, L"The virtual joystick to which this input is mapped.");
 			this->mAxisXJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
@@ -967,8 +971,8 @@ namespace My05HydraReading
 			this->mAxisYAxis->Location = System::Drawing::Point(108, 118);
 			this->mAxisYAxis->Name = L"mAxisYAxis";
 			this->mAxisYAxis->Size = System::Drawing::Size(70, 21);
-			this->mAxisYAxis->TabIndex = 39;
-			ToolTip->SetToolTip(this->mAxisYAxis, L"The axis of the virtual joystick to which this input is mapped.");
+			this->mAxisYAxis->TabIndex = 46;
+			ToolTip->SetToolTip(this->mAxisYAxis, L"The desired Axis. Not all games support axes 7 and 8, even less axes 9 and up.");
 			this->mAxisYAxis->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mAxisXAxis
@@ -978,8 +982,8 @@ namespace My05HydraReading
 			this->mAxisXAxis->Location = System::Drawing::Point(108, 42);
 			this->mAxisXAxis->Name = L"mAxisXAxis";
 			this->mAxisXAxis->Size = System::Drawing::Size(70, 21);
-			this->mAxisXAxis->TabIndex = 39;
-			ToolTip->SetToolTip(this->mAxisXAxis, L"The axis of the virtual joystick to which this input is mapped.");
+			this->mAxisXAxis->TabIndex = 42;
+			ToolTip->SetToolTip(this->mAxisXAxis, L"The desired Axis. Not all games support axes 7 and 8, even less axes 9 and up.");
 			this->mAxisXAxis->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mAxisRollJoy
@@ -989,7 +993,7 @@ namespace My05HydraReading
 			this->mAxisRollJoy->Location = System::Drawing::Point(52, 194);
 			this->mAxisRollJoy->Name = L"mAxisRollJoy";
 			this->mAxisRollJoy->Size = System::Drawing::Size(50, 21);
-			this->mAxisRollJoy->TabIndex = 38;
+			this->mAxisRollJoy->TabIndex = 61;
 			ToolTip->SetToolTip(this->mAxisRollJoy, L"The virtual joystick to which this input is mapped.");
 			this->mAxisRollJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
@@ -1000,7 +1004,7 @@ namespace My05HydraReading
 			this->mAxisPitchJoy->Location = System::Drawing::Point(52, 118);
 			this->mAxisPitchJoy->Name = L"mAxisPitchJoy";
 			this->mAxisPitchJoy->Size = System::Drawing::Size(50, 21);
-			this->mAxisPitchJoy->TabIndex = 38;
+			this->mAxisPitchJoy->TabIndex = 57;
 			ToolTip->SetToolTip(this->mAxisPitchJoy, L"The virtual joystick to which this input is mapped.");
 			this->mAxisPitchJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
@@ -1011,8 +1015,8 @@ namespace My05HydraReading
 			this->mAxisRollAxis->Location = System::Drawing::Point(108, 194);
 			this->mAxisRollAxis->Name = L"mAxisRollAxis";
 			this->mAxisRollAxis->Size = System::Drawing::Size(70, 21);
-			this->mAxisRollAxis->TabIndex = 39;
-			ToolTip->SetToolTip(this->mAxisRollAxis, L"The axis of the virtual joystick to which this input is mapped.");
+			this->mAxisRollAxis->TabIndex = 62;
+			ToolTip->SetToolTip(this->mAxisRollAxis, L"The desired Axis. Not all games support axes 7 and 8, even less axes 9 and up.");
 			this->mAxisRollAxis->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mAxisYawJoy
@@ -1022,7 +1026,7 @@ namespace My05HydraReading
 			this->mAxisYawJoy->Location = System::Drawing::Point(52, 42);
 			this->mAxisYawJoy->Name = L"mAxisYawJoy";
 			this->mAxisYawJoy->Size = System::Drawing::Size(50, 21);
-			this->mAxisYawJoy->TabIndex = 38;
+			this->mAxisYawJoy->TabIndex = 53;
 			ToolTip->SetToolTip(this->mAxisYawJoy, L"The virtual joystick to which this input is mapped.");
 			this->mAxisYawJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
@@ -1033,8 +1037,8 @@ namespace My05HydraReading
 			this->mAxisPitchAxis->Location = System::Drawing::Point(108, 118);
 			this->mAxisPitchAxis->Name = L"mAxisPitchAxis";
 			this->mAxisPitchAxis->Size = System::Drawing::Size(70, 21);
-			this->mAxisPitchAxis->TabIndex = 39;
-			ToolTip->SetToolTip(this->mAxisPitchAxis, L"The axis of the virtual joystick to which this input is mapped.");
+			this->mAxisPitchAxis->TabIndex = 58;
+			ToolTip->SetToolTip(this->mAxisPitchAxis, L"The desired Axis. Not all games support axes 7 and 8, even less axes 9 and up.");
 			this->mAxisPitchAxis->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mAxisYawAxis
@@ -1044,8 +1048,8 @@ namespace My05HydraReading
 			this->mAxisYawAxis->Location = System::Drawing::Point(108, 42);
 			this->mAxisYawAxis->Name = L"mAxisYawAxis";
 			this->mAxisYawAxis->Size = System::Drawing::Size(70, 21);
-			this->mAxisYawAxis->TabIndex = 39;
-			ToolTip->SetToolTip(this->mAxisYawAxis, L"The axis of the virtual joystick to which this input is mapped.");
+			this->mAxisYawAxis->TabIndex = 54;
+			ToolTip->SetToolTip(this->mAxisYawAxis, L"The desired Axis. Not all games support axes 7 and 8, even less axes 9 and up.");
 			this->mAxisYawAxis->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mAxisZRange
@@ -1054,7 +1058,7 @@ namespace My05HydraReading
 			this->mAxisZRange->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {1000, 0, 0, 0});
 			this->mAxisZRange->Name = L"mAxisZRange";
 			this->mAxisZRange->Size = System::Drawing::Size(45, 20);
-			this->mAxisZRange->TabIndex = 39;
+			this->mAxisZRange->TabIndex = 51;
 			ToolTip->SetToolTip(this->mAxisZRange, L"How many millimeters away from the origin the controller has to be for this axis " 
 				L"to be at its maximum/minimum.");
 			this->mAxisZRange->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {100, 0, 0, 0});
@@ -1066,7 +1070,7 @@ namespace My05HydraReading
 			this->mAxisYRange->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {1000, 0, 0, 0});
 			this->mAxisYRange->Name = L"mAxisYRange";
 			this->mAxisYRange->Size = System::Drawing::Size(45, 20);
-			this->mAxisYRange->TabIndex = 39;
+			this->mAxisYRange->TabIndex = 47;
 			ToolTip->SetToolTip(this->mAxisYRange, L"How many millimeters away from the origin the controller has to be for this axis " 
 				L"to be at its maximum/minimum.");
 			this->mAxisYRange->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {100, 0, 0, 0});
@@ -1078,7 +1082,7 @@ namespace My05HydraReading
 			this->mAxisXRange->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {1000, 0, 0, 0});
 			this->mAxisXRange->Name = L"mAxisXRange";
 			this->mAxisXRange->Size = System::Drawing::Size(45, 20);
-			this->mAxisXRange->TabIndex = 39;
+			this->mAxisXRange->TabIndex = 43;
 			ToolTip->SetToolTip(this->mAxisXRange, L"How many millimeters away from the origin the controller has to be for this axis " 
 				L"to be at its maximum/minimum.");
 			this->mAxisXRange->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {100, 0, 0, 0});
@@ -1090,7 +1094,7 @@ namespace My05HydraReading
 			this->mAxisRollRange->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {180, 0, 0, 0});
 			this->mAxisRollRange->Name = L"mAxisRollRange";
 			this->mAxisRollRange->Size = System::Drawing::Size(45, 20);
-			this->mAxisRollRange->TabIndex = 39;
+			this->mAxisRollRange->TabIndex = 63;
 			ToolTip->SetToolTip(this->mAxisRollRange, L"How many degrees the controller has to be rotated for this axis to be at its maxi" 
 				L"mum/minimum.");
 			this->mAxisRollRange->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {45, 0, 0, 0});
@@ -1102,7 +1106,7 @@ namespace My05HydraReading
 			this->mAxisPitchRange->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {180, 0, 0, 0});
 			this->mAxisPitchRange->Name = L"mAxisPitchRange";
 			this->mAxisPitchRange->Size = System::Drawing::Size(45, 20);
-			this->mAxisPitchRange->TabIndex = 39;
+			this->mAxisPitchRange->TabIndex = 59;
 			ToolTip->SetToolTip(this->mAxisPitchRange, L"How many degrees the controller has to be rotated for this axis to be at its maxi" 
 				L"mum/minimum.");
 			this->mAxisPitchRange->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {45, 0, 0, 0});
@@ -1114,7 +1118,7 @@ namespace My05HydraReading
 			this->mAxisYawRange->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {180, 0, 0, 0});
 			this->mAxisYawRange->Name = L"mAxisYawRange";
 			this->mAxisYawRange->Size = System::Drawing::Size(45, 20);
-			this->mAxisYawRange->TabIndex = 39;
+			this->mAxisYawRange->TabIndex = 55;
 			ToolTip->SetToolTip(this->mAxisYawRange, L"How many degrees the controller has to be rotated for this axis to be at its maxi" 
 				L"mum/minimum.");
 			this->mAxisYawRange->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {45, 0, 0, 0});
@@ -1126,7 +1130,7 @@ namespace My05HydraReading
 			this->mAxisZInvert->Location = System::Drawing::Point(126, 171);
 			this->mAxisZInvert->Name = L"mAxisZInvert";
 			this->mAxisZInvert->Size = System::Drawing::Size(52, 17);
-			this->mAxisZInvert->TabIndex = 40;
+			this->mAxisZInvert->TabIndex = 48;
 			this->mAxisZInvert->Text = L"invert";
 			ToolTip->SetToolTip(this->mAxisZInvert, L"Whether or not this axis should be inverted.");
 			this->mAxisZInvert->UseVisualStyleBackColor = true;
@@ -1138,7 +1142,7 @@ namespace My05HydraReading
 			this->mAxisYInvert->Location = System::Drawing::Point(126, 95);
 			this->mAxisYInvert->Name = L"mAxisYInvert";
 			this->mAxisYInvert->Size = System::Drawing::Size(52, 17);
-			this->mAxisYInvert->TabIndex = 40;
+			this->mAxisYInvert->TabIndex = 44;
 			this->mAxisYInvert->Text = L"invert";
 			ToolTip->SetToolTip(this->mAxisYInvert, L"Whether or not this axis should be inverted.");
 			this->mAxisYInvert->UseVisualStyleBackColor = true;
@@ -1162,7 +1166,7 @@ namespace My05HydraReading
 			this->mAxisRollInvert->Location = System::Drawing::Point(133, 170);
 			this->mAxisRollInvert->Name = L"mAxisRollInvert";
 			this->mAxisRollInvert->Size = System::Drawing::Size(52, 17);
-			this->mAxisRollInvert->TabIndex = 40;
+			this->mAxisRollInvert->TabIndex = 60;
 			this->mAxisRollInvert->Text = L"invert";
 			ToolTip->SetToolTip(this->mAxisRollInvert, L"Whether or not this axis should be inverted.");
 			this->mAxisRollInvert->UseVisualStyleBackColor = true;
@@ -1174,7 +1178,7 @@ namespace My05HydraReading
 			this->mAxisPitchInvert->Location = System::Drawing::Point(133, 94);
 			this->mAxisPitchInvert->Name = L"mAxisPitchInvert";
 			this->mAxisPitchInvert->Size = System::Drawing::Size(52, 17);
-			this->mAxisPitchInvert->TabIndex = 40;
+			this->mAxisPitchInvert->TabIndex = 56;
 			this->mAxisPitchInvert->Text = L"invert";
 			ToolTip->SetToolTip(this->mAxisPitchInvert, L"Whether or not this axis should be inverted.");
 			this->mAxisPitchInvert->UseVisualStyleBackColor = true;
@@ -1186,7 +1190,7 @@ namespace My05HydraReading
 			this->mAxisYawInvert->Location = System::Drawing::Point(133, 18);
 			this->mAxisYawInvert->Name = L"mAxisYawInvert";
 			this->mAxisYawInvert->Size = System::Drawing::Size(52, 17);
-			this->mAxisYawInvert->TabIndex = 40;
+			this->mAxisYawInvert->TabIndex = 52;
 			this->mAxisYawInvert->Text = L"invert";
 			ToolTip->SetToolTip(this->mAxisYawInvert, L"Whether or not this axis should be inverted.");
 			this->mAxisYawInvert->UseVisualStyleBackColor = true;
@@ -1195,7 +1199,7 @@ namespace My05HydraReading
 			// groupBox1
 			// 
 			groupBox1->Controls->Add(this->mJoystickYTypeAxis);
-			groupBox1->Controls->Add(mJoystickYTypeButtons);
+			groupBox1->Controls->Add(this->mJoystickYTypeButtons);
 			groupBox1->Controls->Add(this->mJoystickYAxisAxis);
 			groupBox1->Controls->Add(this->mJoystickYAxisJoy);
 			groupBox1->Controls->Add(this->mJoystickYButtonMinButton);
@@ -1208,7 +1212,7 @@ namespace My05HydraReading
 			groupBox1->Location = System::Drawing::Point(192, 19);
 			groupBox1->Name = L"groupBox1";
 			groupBox1->Size = System::Drawing::Size(182, 143);
-			groupBox1->TabIndex = 44;
+			groupBox1->TabIndex = 32;
 			groupBox1->TabStop = false;
 			groupBox1->Text = L"Y Axis";
 			// 
@@ -1219,7 +1223,7 @@ namespace My05HydraReading
 			this->mJoystickYTypeAxis->Location = System::Drawing::Point(52, 19);
 			this->mJoystickYTypeAxis->Name = L"mJoystickYTypeAxis";
 			this->mJoystickYTypeAxis->Size = System::Drawing::Size(44, 17);
-			this->mJoystickYTypeAxis->TabIndex = 42;
+			this->mJoystickYTypeAxis->TabIndex = 32;
 			this->mJoystickYTypeAxis->TabStop = true;
 			this->mJoystickYTypeAxis->Text = L"Axis";
 			this->mJoystickYTypeAxis->UseVisualStyleBackColor = true;
@@ -1227,13 +1231,13 @@ namespace My05HydraReading
 			// 
 			// mJoystickYTypeButtons
 			// 
-			mJoystickYTypeButtons->AutoSize = true;
-			mJoystickYTypeButtons->Location = System::Drawing::Point(102, 20);
-			mJoystickYTypeButtons->Name = L"mJoystickYTypeButtons";
-			mJoystickYTypeButtons->Size = System::Drawing::Size(61, 17);
-			mJoystickYTypeButtons->TabIndex = 43;
-			mJoystickYTypeButtons->Text = L"Buttons";
-			mJoystickYTypeButtons->UseVisualStyleBackColor = true;
+			this->mJoystickYTypeButtons->AutoSize = true;
+			this->mJoystickYTypeButtons->Location = System::Drawing::Point(102, 19);
+			this->mJoystickYTypeButtons->Name = L"mJoystickYTypeButtons";
+			this->mJoystickYTypeButtons->Size = System::Drawing::Size(61, 17);
+			this->mJoystickYTypeButtons->TabIndex = 33;
+			this->mJoystickYTypeButtons->Text = L"Buttons";
+			this->mJoystickYTypeButtons->UseVisualStyleBackColor = true;
 			// 
 			// mJoystickYAxisAxis
 			// 
@@ -1242,7 +1246,8 @@ namespace My05HydraReading
 			this->mJoystickYAxisAxis->Location = System::Drawing::Point(104, 58);
 			this->mJoystickYAxisAxis->Name = L"mJoystickYAxisAxis";
 			this->mJoystickYAxisAxis->Size = System::Drawing::Size(70, 21);
-			this->mJoystickYAxisAxis->TabIndex = 39;
+			this->mJoystickYAxisAxis->TabIndex = 35;
+			ToolTip->SetToolTip(this->mJoystickYAxisAxis, L"The desired Axis. Not all games support axes 7 and 8, even less axes 9 and up.");
 			this->mJoystickYAxisAxis->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mJoystickYAxisJoy
@@ -1252,7 +1257,7 @@ namespace My05HydraReading
 			this->mJoystickYAxisJoy->Location = System::Drawing::Point(48, 58);
 			this->mJoystickYAxisJoy->Name = L"mJoystickYAxisJoy";
 			this->mJoystickYAxisJoy->Size = System::Drawing::Size(50, 21);
-			this->mJoystickYAxisJoy->TabIndex = 38;
+			this->mJoystickYAxisJoy->TabIndex = 34;
 			this->mJoystickYAxisJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mJoystickYButtonMinButton
@@ -1263,7 +1268,7 @@ namespace My05HydraReading
 			this->mJoystickYButtonMinButton->Location = System::Drawing::Point(104, 85);
 			this->mJoystickYButtonMinButton->Name = L"mJoystickYButtonMinButton";
 			this->mJoystickYButtonMinButton->Size = System::Drawing::Size(70, 21);
-			this->mJoystickYButtonMinButton->TabIndex = 25;
+			this->mJoystickYButtonMinButton->TabIndex = 37;
 			this->mJoystickYButtonMinButton->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mJoystickYButtonMaxButton
@@ -1274,7 +1279,7 @@ namespace My05HydraReading
 			this->mJoystickYButtonMaxButton->Location = System::Drawing::Point(104, 112);
 			this->mJoystickYButtonMaxButton->Name = L"mJoystickYButtonMaxButton";
 			this->mJoystickYButtonMaxButton->Size = System::Drawing::Size(70, 21);
-			this->mJoystickYButtonMaxButton->TabIndex = 25;
+			this->mJoystickYButtonMaxButton->TabIndex = 39;
 			this->mJoystickYButtonMaxButton->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mJoystickYButtonMinJoy
@@ -1285,7 +1290,7 @@ namespace My05HydraReading
 			this->mJoystickYButtonMinJoy->Location = System::Drawing::Point(48, 85);
 			this->mJoystickYButtonMinJoy->Name = L"mJoystickYButtonMinJoy";
 			this->mJoystickYButtonMinJoy->Size = System::Drawing::Size(50, 21);
-			this->mJoystickYButtonMinJoy->TabIndex = 24;
+			this->mJoystickYButtonMinJoy->TabIndex = 36;
 			this->mJoystickYButtonMinJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mJoystickYButtonMaxJoy
@@ -1296,7 +1301,7 @@ namespace My05HydraReading
 			this->mJoystickYButtonMaxJoy->Location = System::Drawing::Point(48, 112);
 			this->mJoystickYButtonMaxJoy->Name = L"mJoystickYButtonMaxJoy";
 			this->mJoystickYButtonMaxJoy->Size = System::Drawing::Size(50, 21);
-			this->mJoystickYButtonMaxJoy->TabIndex = 24;
+			this->mJoystickYButtonMaxJoy->TabIndex = 38;
 			this->mJoystickYButtonMaxJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// pictureBox7
@@ -1326,6 +1331,25 @@ namespace My05HydraReading
 			label16->TabIndex = 20;
 			label16->Text = L"Up";
 			// 
+			// pictureBox8
+			// 
+			pictureBox8->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"pictureBox8.Image")));
+			pictureBox8->Location = System::Drawing::Point(6, 19);
+			pictureBox8->Name = L"pictureBox8";
+			pictureBox8->Size = System::Drawing::Size(40, 50);
+			pictureBox8->TabIndex = 14;
+			pictureBox8->TabStop = false;
+			// 
+			// mTriggerTypeButton
+			// 
+			this->mTriggerTypeButton->AutoSize = true;
+			this->mTriggerTypeButton->Location = System::Drawing::Point(102, 19);
+			this->mTriggerTypeButton->Name = L"mTriggerTypeButton";
+			this->mTriggerTypeButton->Size = System::Drawing::Size(56, 17);
+			this->mTriggerTypeButton->TabIndex = 20;
+			this->mTriggerTypeButton->Text = L"Button";
+			this->mTriggerTypeButton->UseVisualStyleBackColor = true;
+			// 
 			// mLabelBase
 			// 
 			this->mLabelBase->AutoSize = true;
@@ -1343,7 +1367,7 @@ namespace My05HydraReading
 			this->mButton1Button->Location = System::Drawing::Point(108, 35);
 			this->mButton1Button->Name = L"mButton1Button";
 			this->mButton1Button->Size = System::Drawing::Size(70, 21);
-			this->mButton1Button->TabIndex = 25;
+			this->mButton1Button->TabIndex = 6;
 			this->mButton1Button->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mButton2Button
@@ -1353,7 +1377,7 @@ namespace My05HydraReading
 			this->mButton2Button->Location = System::Drawing::Point(108, 91);
 			this->mButton2Button->Name = L"mButton2Button";
 			this->mButton2Button->Size = System::Drawing::Size(70, 21);
-			this->mButton2Button->TabIndex = 27;
+			this->mButton2Button->TabIndex = 8;
 			this->mButton2Button->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mButton3Button
@@ -1363,7 +1387,7 @@ namespace My05HydraReading
 			this->mButton3Button->Location = System::Drawing::Point(108, 147);
 			this->mButton3Button->Name = L"mButton3Button";
 			this->mButton3Button->Size = System::Drawing::Size(70, 21);
-			this->mButton3Button->TabIndex = 29;
+			this->mButton3Button->TabIndex = 10;
 			this->mButton3Button->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mButton4Button
@@ -1373,7 +1397,7 @@ namespace My05HydraReading
 			this->mButton4Button->Location = System::Drawing::Point(108, 203);
 			this->mButton4Button->Name = L"mButton4Button";
 			this->mButton4Button->Size = System::Drawing::Size(70, 21);
-			this->mButton4Button->TabIndex = 31;
+			this->mButton4Button->TabIndex = 12;
 			this->mButton4Button->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mButtonJoystickButton
@@ -1383,7 +1407,7 @@ namespace My05HydraReading
 			this->mButtonJoystickButton->Location = System::Drawing::Point(108, 259);
 			this->mButtonJoystickButton->Name = L"mButtonJoystickButton";
 			this->mButtonJoystickButton->Size = System::Drawing::Size(70, 21);
-			this->mButtonJoystickButton->TabIndex = 33;
+			this->mButtonJoystickButton->TabIndex = 14;
 			this->mButtonJoystickButton->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mButtonStartButton
@@ -1393,7 +1417,7 @@ namespace My05HydraReading
 			this->mButtonStartButton->Location = System::Drawing::Point(108, 315);
 			this->mButtonStartButton->Name = L"mButtonStartButton";
 			this->mButtonStartButton->Size = System::Drawing::Size(70, 21);
-			this->mButtonStartButton->TabIndex = 35;
+			this->mButtonStartButton->TabIndex = 16;
 			this->mButtonStartButton->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mButtonBumperButton
@@ -1403,7 +1427,7 @@ namespace My05HydraReading
 			this->mButtonBumperButton->Location = System::Drawing::Point(108, 371);
 			this->mButtonBumperButton->Name = L"mButtonBumperButton";
 			this->mButtonBumperButton->Size = System::Drawing::Size(70, 21);
-			this->mButtonBumperButton->TabIndex = 37;
+			this->mButtonBumperButton->TabIndex = 18;
 			this->mButtonBumperButton->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mPositionGroup
@@ -1432,7 +1456,7 @@ namespace My05HydraReading
 			this->mPositionGroup->Location = System::Drawing::Point(203, 242);
 			this->mPositionGroup->Name = L"mPositionGroup";
 			this->mPositionGroup->Size = System::Drawing::Size(186, 249);
-			this->mPositionGroup->TabIndex = 45;
+			this->mPositionGroup->TabIndex = 40;
 			this->mPositionGroup->TabStop = false;
 			this->mPositionGroup->Text = L"Position";
 			// 
@@ -1469,7 +1493,7 @@ namespace My05HydraReading
 			this->mButtonsGroup->Location = System::Drawing::Point(12, 68);
 			this->mButtonsGroup->Name = L"mButtonsGroup";
 			this->mButtonsGroup->Size = System::Drawing::Size(185, 412);
-			this->mButtonsGroup->TabIndex = 46;
+			this->mButtonsGroup->TabIndex = 5;
 			this->mButtonsGroup->TabStop = false;
 			this->mButtonsGroup->Text = L"Buttons";
 			// 
@@ -1494,7 +1518,7 @@ namespace My05HydraReading
 			this->mControlGroup->Location = System::Drawing::Point(12, 12);
 			this->mControlGroup->Name = L"mControlGroup";
 			this->mControlGroup->Size = System::Drawing::Size(571, 50);
-			this->mControlGroup->TabIndex = 49;
+			this->mControlGroup->TabIndex = 1;
 			this->mControlGroup->TabStop = false;
 			this->mControlGroup->Text = L"Control";
 			// 
@@ -1524,7 +1548,7 @@ namespace My05HydraReading
 			this->mRotationGroup->Location = System::Drawing::Point(395, 242);
 			this->mRotationGroup->Name = L"mRotationGroup";
 			this->mRotationGroup->Size = System::Drawing::Size(188, 249);
-			this->mRotationGroup->TabIndex = 45;
+			this->mRotationGroup->TabIndex = 52;
 			this->mRotationGroup->TabStop = false;
 			this->mRotationGroup->Text = L"Rotation";
 			// 
@@ -1534,33 +1558,14 @@ namespace My05HydraReading
 			this->mTriggerGroup->Controls->Add(pictureBox8);
 			this->mTriggerGroup->Controls->Add(this->mTriggerAxis);
 			this->mTriggerGroup->Controls->Add(this->mTriggerJoy);
-			this->mTriggerGroup->Controls->Add(radioButton1);
+			this->mTriggerGroup->Controls->Add(this->mTriggerTypeButton);
 			this->mTriggerGroup->Controls->Add(this->mTriggerButton);
 			this->mTriggerGroup->Location = System::Drawing::Point(12, 497);
 			this->mTriggerGroup->Name = L"mTriggerGroup";
 			this->mTriggerGroup->Size = System::Drawing::Size(260, 74);
-			this->mTriggerGroup->TabIndex = 50;
+			this->mTriggerGroup->TabIndex = 19;
 			this->mTriggerGroup->TabStop = false;
 			this->mTriggerGroup->Text = L"Trigger";
-			// 
-			// pictureBox8
-			// 
-			pictureBox8->Image = (cli::safe_cast<System::Drawing::Image^  >(resources->GetObject(L"pictureBox8.Image")));
-			pictureBox8->Location = System::Drawing::Point(6, 19);
-			pictureBox8->Name = L"pictureBox8";
-			pictureBox8->Size = System::Drawing::Size(40, 50);
-			pictureBox8->TabIndex = 14;
-			pictureBox8->TabStop = false;
-			// 
-			// radioButton1
-			// 
-			radioButton1->AutoSize = true;
-			radioButton1->Location = System::Drawing::Point(102, 19);
-			radioButton1->Name = L"radioButton1";
-			radioButton1->Size = System::Drawing::Size(56, 17);
-			radioButton1->TabIndex = 43;
-			radioButton1->Text = L"Button";
-			radioButton1->UseVisualStyleBackColor = true;
 			// 
 			// mTriggerTypeAxis
 			// 
@@ -1569,11 +1574,31 @@ namespace My05HydraReading
 			this->mTriggerTypeAxis->Location = System::Drawing::Point(52, 19);
 			this->mTriggerTypeAxis->Name = L"mTriggerTypeAxis";
 			this->mTriggerTypeAxis->Size = System::Drawing::Size(44, 17);
-			this->mTriggerTypeAxis->TabIndex = 42;
+			this->mTriggerTypeAxis->TabIndex = 19;
 			this->mTriggerTypeAxis->TabStop = true;
 			this->mTriggerTypeAxis->Text = L"Axis";
 			this->mTriggerTypeAxis->UseVisualStyleBackColor = true;
 			this->mTriggerTypeAxis->CheckedChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
+			// 
+			// mTriggerAxis
+			// 
+			this->mTriggerAxis->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->mTriggerAxis->FormattingEnabled = true;
+			this->mTriggerAxis->Location = System::Drawing::Point(108, 42);
+			this->mTriggerAxis->Name = L"mTriggerAxis";
+			this->mTriggerAxis->Size = System::Drawing::Size(70, 21);
+			this->mTriggerAxis->TabIndex = 22;
+			this->mTriggerAxis->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
+			// 
+			// mTriggerJoy
+			// 
+			this->mTriggerJoy->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->mTriggerJoy->FormattingEnabled = true;
+			this->mTriggerJoy->Location = System::Drawing::Point(52, 42);
+			this->mTriggerJoy->Name = L"mTriggerJoy";
+			this->mTriggerJoy->Size = System::Drawing::Size(50, 21);
+			this->mTriggerJoy->TabIndex = 21;
+			this->mTriggerJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mTriggerButton
 			// 
@@ -1583,28 +1608,9 @@ namespace My05HydraReading
 			this->mTriggerButton->Location = System::Drawing::Point(184, 42);
 			this->mTriggerButton->Name = L"mTriggerButton";
 			this->mTriggerButton->Size = System::Drawing::Size(70, 21);
-			this->mTriggerButton->TabIndex = 25;
+			this->mTriggerButton->TabIndex = 23;
+			ToolTip->SetToolTip(this->mTriggerButton, L"The desired Axis. Not all games support axes 7 and 8, even less axes 9 and up.");
 			this->mTriggerButton->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
-			// 
-			// mTriggerJoy
-			// 
-			this->mTriggerJoy->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
-			this->mTriggerJoy->FormattingEnabled = true;
-			this->mTriggerJoy->Location = System::Drawing::Point(52, 42);
-			this->mTriggerJoy->Name = L"mTriggerJoy";
-			this->mTriggerJoy->Size = System::Drawing::Size(50, 21);
-			this->mTriggerJoy->TabIndex = 38;
-			this->mTriggerJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
-			// 
-			// mTriggerAxis
-			// 
-			this->mTriggerAxis->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
-			this->mTriggerAxis->FormattingEnabled = true;
-			this->mTriggerAxis->Location = System::Drawing::Point(108, 42);
-			this->mTriggerAxis->Name = L"mTriggerAxis";
-			this->mTriggerAxis->Size = System::Drawing::Size(70, 21);
-			this->mTriggerAxis->TabIndex = 39;
-			this->mTriggerAxis->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// MainForm
 			// 
@@ -1622,6 +1628,7 @@ namespace My05HydraReading
 			this->MaximizeBox = false;
 			this->Name = L"MainForm";
 			this->Text = L"Razer Hydra PPJoy DirectInput Wrapper";
+			this->FormClosing += gcnew System::Windows::Forms::FormClosingEventHandler(this, &MainForm::OnClose);
 			this->Shown += gcnew System::EventHandler(this, &MainForm::OnOpen);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(mButton1Image))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(mButton2Image))->EndInit();
@@ -1648,6 +1655,7 @@ namespace My05HydraReading
 			groupBox1->ResumeLayout(false);
 			groupBox1->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(pictureBox7))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(pictureBox8))->EndInit();
 			this->mPositionGroup->ResumeLayout(false);
 			this->mPositionGroup->PerformLayout();
 			this->mButtonsGroup->ResumeLayout(false);
@@ -1658,7 +1666,6 @@ namespace My05HydraReading
 			this->mRotationGroup->PerformLayout();
 			this->mTriggerGroup->ResumeLayout(false);
 			this->mTriggerGroup->PerformLayout();
-			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(pictureBox8))->EndInit();
 			this->ResumeLayout(false);
 			this->PerformLayout();
 
@@ -1685,9 +1692,10 @@ namespace My05HydraReading
 		**/
 		const bool SetBase();
 
+		static const int LEFT_CONTROLLER = 0;
+		static const int RIGHT_CONTROLLER = 1;
 
-		int mLeftControllerIndex;
-		int mRightControllerIndex;
+		int* mControllerIndices;
 
 		/**	\brief Checks if the controllers are correctly initalized (i.e. have been in the base once, but on different sides)
 			and sets mLeftControllerIndex and mRightControllerIndex accordingly.
@@ -1703,16 +1711,9 @@ namespace My05HydraReading
 
 		AboutForm^ mAboutForm;
 		System::Void OnAboutClicked(System::Object^  sender, System::EventArgs^  e);
-
-		/** \brief Saves the current settings of a given controller to a given ini file.
-		**/
-		const bool SaveSettings(const std::wstring& filename, const bool left);
-
-		/** \brief Loads settings from an ini file and applies them to the given controller.
-		**/
-		const bool LoadSettings(const std::wstring& filename, const bool left);
 		
-		bool mInitialized; ///< Set to true once OnOpen() has been called. Before that I ignore UpdateBindings() calls.
+		bool mInitialized;
+		bool mIgnoreBindingChanges; //For automatically setting all the bindings - I don't want to save the file 50 times.
 
 		/** \brief Called whenever a setting is changed - updates the bindings.
 		**/
@@ -1725,6 +1726,17 @@ namespace My05HydraReading
 		void InitComboBoxes();
 
 		const bool IsCurrentControllerLeft() { return this->mControllerChoice->SelectedIndex == 0; }
-};
+
+		ControllerMapping* mControllerMappings; // 0 = left, 1 = right
+
+		System::Void OnClose(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e);
+
+		/** \brief Loads the given file into the currently active controller.
+		**/
+		const bool LoadSettings(const std::wstring& filename);
+
+		void ApplySettings();
+		void ProcessRadioButtons();
+	};
 }
 

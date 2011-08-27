@@ -238,9 +238,10 @@ namespace My05HydraReading
 			this->mAxisRollInvert = (gcnew System::Windows::Forms::CheckBox());
 			this->mAxisPitchInvert = (gcnew System::Windows::Forms::CheckBox());
 			this->mAxisYawInvert = (gcnew System::Windows::Forms::CheckBox());
+			this->mJoystickYAxisAxis = (gcnew System::Windows::Forms::ComboBox());
+			this->mTriggerButton = (gcnew System::Windows::Forms::ComboBox());
 			this->mJoystickYTypeAxis = (gcnew System::Windows::Forms::RadioButton());
 			this->mJoystickYTypeButtons = (gcnew System::Windows::Forms::RadioButton());
-			this->mJoystickYAxisAxis = (gcnew System::Windows::Forms::ComboBox());
 			this->mJoystickYAxisJoy = (gcnew System::Windows::Forms::ComboBox());
 			this->mJoystickYButtonMinButton = (gcnew System::Windows::Forms::ComboBox());
 			this->mJoystickYButtonMaxButton = (gcnew System::Windows::Forms::ComboBox());
@@ -264,7 +265,6 @@ namespace My05HydraReading
 			this->mTriggerTypeAxis = (gcnew System::Windows::Forms::RadioButton());
 			this->mTriggerAxis = (gcnew System::Windows::Forms::ComboBox());
 			this->mTriggerJoy = (gcnew System::Windows::Forms::ComboBox());
-			this->mTriggerButton = (gcnew System::Windows::Forms::ComboBox());
 			mSaveButton = (gcnew System::Windows::Forms::Button());
 			mLoadButton = (gcnew System::Windows::Forms::Button());
 			mOriginButton = (gcnew System::Windows::Forms::Button());
@@ -352,6 +352,7 @@ namespace My05HydraReading
 			mSaveButton->Text = L"Save";
 			ToolTip->SetToolTip(mSaveButton, L"Saves the layout of the current controller (not both!) to a file.");
 			mSaveButton->UseVisualStyleBackColor = true;
+			mSaveButton->Click += gcnew System::EventHandler(this, &MainForm::mSaveButton_Click);
 			// 
 			// mLoadButton
 			// 
@@ -362,6 +363,7 @@ namespace My05HydraReading
 			mLoadButton->Text = L"Load";
 			ToolTip->SetToolTip(mLoadButton, L"Loads the layout of the current controller (not both!) from a file.");
 			mLoadButton->UseVisualStyleBackColor = true;
+			mLoadButton->Click += gcnew System::EventHandler(this, &MainForm::mLoadButton_Click);
 			// 
 			// mOriginButton
 			// 
@@ -1196,6 +1198,29 @@ namespace My05HydraReading
 			this->mAxisYawInvert->UseVisualStyleBackColor = true;
 			this->mAxisYawInvert->CheckStateChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
+			// mJoystickYAxisAxis
+			// 
+			this->mJoystickYAxisAxis->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->mJoystickYAxisAxis->FormattingEnabled = true;
+			this->mJoystickYAxisAxis->Location = System::Drawing::Point(104, 58);
+			this->mJoystickYAxisAxis->Name = L"mJoystickYAxisAxis";
+			this->mJoystickYAxisAxis->Size = System::Drawing::Size(70, 21);
+			this->mJoystickYAxisAxis->TabIndex = 35;
+			ToolTip->SetToolTip(this->mJoystickYAxisAxis, L"The desired Axis. Not all games support axes 7 and 8, even less axes 9 and up.");
+			this->mJoystickYAxisAxis->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
+			// 
+			// mTriggerButton
+			// 
+			this->mTriggerButton->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
+			this->mTriggerButton->Enabled = false;
+			this->mTriggerButton->FormattingEnabled = true;
+			this->mTriggerButton->Location = System::Drawing::Point(184, 42);
+			this->mTriggerButton->Name = L"mTriggerButton";
+			this->mTriggerButton->Size = System::Drawing::Size(70, 21);
+			this->mTriggerButton->TabIndex = 23;
+			ToolTip->SetToolTip(this->mTriggerButton, L"The desired Axis. Not all games support axes 7 and 8, even less axes 9 and up.");
+			this->mTriggerButton->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
+			// 
 			// groupBox1
 			// 
 			groupBox1->Controls->Add(this->mJoystickYTypeAxis);
@@ -1238,17 +1263,6 @@ namespace My05HydraReading
 			this->mJoystickYTypeButtons->TabIndex = 33;
 			this->mJoystickYTypeButtons->Text = L"Buttons";
 			this->mJoystickYTypeButtons->UseVisualStyleBackColor = true;
-			// 
-			// mJoystickYAxisAxis
-			// 
-			this->mJoystickYAxisAxis->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
-			this->mJoystickYAxisAxis->FormattingEnabled = true;
-			this->mJoystickYAxisAxis->Location = System::Drawing::Point(104, 58);
-			this->mJoystickYAxisAxis->Name = L"mJoystickYAxisAxis";
-			this->mJoystickYAxisAxis->Size = System::Drawing::Size(70, 21);
-			this->mJoystickYAxisAxis->TabIndex = 35;
-			ToolTip->SetToolTip(this->mJoystickYAxisAxis, L"The desired Axis. Not all games support axes 7 and 8, even less axes 9 and up.");
-			this->mJoystickYAxisAxis->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
 			// mJoystickYAxisJoy
 			// 
@@ -1600,18 +1614,6 @@ namespace My05HydraReading
 			this->mTriggerJoy->TabIndex = 21;
 			this->mTriggerJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
-			// mTriggerButton
-			// 
-			this->mTriggerButton->DropDownStyle = System::Windows::Forms::ComboBoxStyle::DropDownList;
-			this->mTriggerButton->Enabled = false;
-			this->mTriggerButton->FormattingEnabled = true;
-			this->mTriggerButton->Location = System::Drawing::Point(184, 42);
-			this->mTriggerButton->Name = L"mTriggerButton";
-			this->mTriggerButton->Size = System::Drawing::Size(70, 21);
-			this->mTriggerButton->TabIndex = 23;
-			ToolTip->SetToolTip(this->mTriggerButton, L"The desired Axis. Not all games support axes 7 and 8, even less axes 9 and up.");
-			this->mTriggerButton->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
-			// 
 			// MainForm
 			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
@@ -1734,9 +1736,15 @@ namespace My05HydraReading
 		/** \brief Loads the given file into the currently active controller.
 		**/
 		const bool LoadSettings(const std::wstring& filename);
+		
+		/** \brief Saves the currently active controller to the given file.
+		**/
+		const bool SaveSettings(const std::wstring& filename);
 
 		void ApplySettings();
 		void ProcessRadioButtons();
-	};
+		System::Void mSaveButton_Click(System::Object^  sender, System::EventArgs^  e);
+		System::Void mLoadButton_Click(System::Object^  sender, System::EventArgs^  e);
+};
 }
 

@@ -76,6 +76,16 @@ namespace My05HydraReading
 			box->Items->Add("Axis 16");
 			box->SelectedIndex = 0;
 		}
+
+		std::wstring ToWideString( String ^ s)
+		{
+			std::wstring os;
+			using namespace Runtime::InteropServices;
+			const wchar_t* chars = (const wchar_t*)(Marshal::StringToHGlobalUni(s)).ToPointer();
+			os = chars;
+			Marshal::FreeHGlobal(IntPtr((void*)chars));
+			return os;
+		}
 	}
 
 	MainForm::MainForm(void) :
@@ -239,7 +249,6 @@ namespace My05HydraReading
 		}
 		ApplySettings();
 		this->mInitialized = true;
-		this->mIgnoreBindingChanges = false;
 	}
 
 	void MainForm::Error(const std::string& message)
@@ -487,15 +496,19 @@ namespace My05HydraReading
 	System::Void MainForm::SelectedControllerChanged(System::Object^  sender, System::EventArgs^  e)
 	{
 		if(!mInitialized) return;
-		const bool prev = mIgnoreBindingChanges;
-		mIgnoreBindingChanges = true;
 		ApplySettings();
-		mIgnoreBindingChanges = prev;
 	}
 
 	const bool MainForm::LoadSettings(const std::wstring& filename)
 	{
-		return mControllerMappings[this->mControllerChoice->SelectedIndex].Load(filename, (this->mControllerChoice->SelectedIndex == 0 ? L"0" : L"1"));
+		if(!mControllerMappings[this->mControllerChoice->SelectedIndex].Load(filename, (this->mControllerChoice->SelectedIndex == 0 ? L"0" : L"1"))) return false;
+		ApplySettings();
+		return true;
+	}
+	
+	const bool MainForm::SaveSettings(const std::wstring& filename)
+	{
+		return mControllerMappings[this->mControllerChoice->SelectedIndex].Save(filename);
 	}
 
 	void MainForm::ProcessRadioButtons()
@@ -521,6 +534,7 @@ namespace My05HydraReading
 
 	void MainForm::ApplySettings()
 	{
+		this->mIgnoreBindingChanges = true;
 		ControllerMapping& mapping = mControllerMappings[this->mControllerChoice->SelectedIndex];
 		
 		//  Buttons
@@ -627,5 +641,36 @@ namespace My05HydraReading
 		}
 
 		ProcessRadioButtons();
+		this->mIgnoreBindingChanges = false;
+	}
+
+	System::Void MainForm::mSaveButton_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		SaveFileDialog^ saveFileDialog1 = gcnew System::Windows::Forms::SaveFileDialog;
+		saveFileDialog1->Filter = "ini files (*.ini)|*.ini|All files (*.*)|*.*";
+		saveFileDialog1->FilterIndex = 1;
+		saveFileDialog1->RestoreDirectory = true;
+		saveFileDialog1->Title = (this->mControllerChoice->SelectedIndex == LEFT_CONTROLLER ? "Save left controller settings" : "Save right controller settings");
+
+		if ( saveFileDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK )
+		{
+			SaveSettings(ToWideString(saveFileDialog1->FileName));
+		}
+	}
+
+	System::Void MainForm::mLoadButton_Click(System::Object^  sender, System::EventArgs^  e)
+	{
+		OpenFileDialog^ openFileDialog1 = gcnew OpenFileDialog;
+
+		openFileDialog1->InitialDirectory = "c:\\";
+		openFileDialog1->Filter = "ini files (*.ini)|*.ini|All files (*.*)|*.*";
+		openFileDialog1->FilterIndex = 1;
+		openFileDialog1->RestoreDirectory = true;
+		openFileDialog1->Title = (this->mControllerChoice->SelectedIndex == LEFT_CONTROLLER ? "Load left controller settings" : "Load right controller settings");
+
+		if ( openFileDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK )
+		{
+			LoadSettings(ToWideString(openFileDialog1->FileName));
+		}
 	}
 }

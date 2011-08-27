@@ -684,7 +684,7 @@ namespace My05HydraReading
 			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
 			this->MaximizeBox = false;
 			this->Name = L"MainForm";
-			this->Text = L"05 Hydra Reading";
+			this->Text = L"Razer Hydra PPJoy DirectInput Wrapper";
 			this->Shown += gcnew System::EventHandler(this, &MainForm::OnOpen);
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(mButton1Image))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(mButton2Image))->EndInit();

@@ -15,6 +15,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <Keyword>ManagedCProj</Keyword>
     <RootNamespace>My05HydraReading</RootNamespace>
+    <ProjectName>Hydra DirectInput Wrapper</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">

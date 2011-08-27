@@ -15,6 +15,7 @@ namespace My05HydraReading
 		{
 			delete components;
 		}
+		assert(sixenseExit() == SIXENSE_SUCCESS);
 	}
 
 	System::Void InitForm::Exit(System::Object^  sender, System::EventArgs^  e)
@@ -69,10 +70,5 @@ namespace My05HydraReading
 			this->errorLabel->Visible = true;
 			this->okButton->Visible = true;
 		}
-	}
-
-	System::Void InitForm::OnClosed(System::Object^  sender, System::Windows::Forms::FormClosedEventArgs^  e)
-	{
-		sixenseExit();
 	}
 }

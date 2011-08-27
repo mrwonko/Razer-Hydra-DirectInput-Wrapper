@@ -108,7 +108,6 @@ namespace My05HydraReading {
 			this->MinimizeBox = false;
 			this->Name = L"InitForm";
 			this->Text = L"Initializing";
-			this->FormClosed += gcnew System::Windows::Forms::FormClosedEventHandler(this, &InitForm::OnClosed);
 			this->Shown += gcnew System::EventHandler(this, &InitForm::OnOpen);
 			this->ResumeLayout(false);
 			this->PerformLayout();
@@ -123,7 +122,5 @@ namespace My05HydraReading {
 		System::Void OnOpen(System::Object^  sender, System::EventArgs^  e);
 		/// \brief Periodically called by the timer, looks for a Hydra base.
 		System::Void OnTimerTick(System::Object^ sender, System::EventArgs^ e);
-		/// \brief Called when the window has been closed. Exits the Sixense SDK.
-		System::Void OnClosed(System::Object^  sender, System::Windows::Forms::FormClosedEventArgs^  e);
 };
 }

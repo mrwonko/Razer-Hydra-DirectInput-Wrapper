@@ -117,11 +117,14 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <metadata name="mLabelXAxis.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
   <metadata name="mSaveButton.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
+  </metadata>
+  <metadata name="ToolTip.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="ToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
   </metadata>
   <metadata name="mLoadButton.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
@@ -130,9 +133,6 @@
     <value>False</value>
   </metadata>
   <metadata name="mAboutButton.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
-    <value>False</value>
-  </metadata>
-  <metadata name="mPressedButtonsDescLabel.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
   <metadata name="mButton1Image.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
@@ -349,6 +349,15 @@
   <metadata name="mJoystickXGroup.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <metadata name="mJoystickXTypeButtons.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label14.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label13.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
   <metadata name="mButton4Image.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
@@ -385,7 +394,7 @@
   <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACgAAAAyCAYAAAAus5mQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAACw8AAAsPAZL5A6UAAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfbCBsHHBNkw9cV
+        YQUAAAAJcEhZcwAACwwAAAsMAT9AIsgAAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfbCBsHHBNkw9cV
         AAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAALxJREFUaEPtlksOgCAMBbn/pTUQ
         UUDB8mnoYtjowjzHqdA6x8IABjCAAQxgAAMYMGDgMMBQRfBwGoBLMiPckrBCwfSHhwC/FA0OZ99wmoBJ
         dleFMrgiJC359H0oz1MhEeQLLoZoX6/fqAm5DU5icjtcC9IMXA3SPKA/P81AtjbLdkjTO1kCF1ul6YP6
@@ -411,7 +420,7 @@
   <data name="pictureBox2.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACgAAAAyCAYAAAAus5mQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAACxEAAAsRAX9kX5EAAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfbCBsHGzMQ7GEa
+        YQUAAAAJcEhZcwAACwwAAAsMAT9AIsgAAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfbCBsHGzMQ7GEa
         AAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAANJJREFUaEPt2NsKhDAMBND+/09X
         W1KJJcReaBJhBHEf7HKcdbJoStiQABKwSyDnnMoeciNY0d0fgyE5rgBDIbvkSnoVGAIp4aowAlLDuSNH
         cG7IGZw5cgVnhpRGCTW1GcRjazQ/Ws5JFcfa7PbnAuBu9EgQCdJ42Q1ieT3uweXoaCESRIJo8cc9gJKg
@@ -431,7 +440,7 @@
   <data name="pictureBox3.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACgAAAAyCAYAAAAus5mQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAACxEAAAsRAX9kX5EAAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfbCBsHHTjRZB8U
+        YQUAAAAJcEhZcwAACwwAAAsMAT9AIsgAAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfbCBsHHTjRZB8U
         AAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAA8ZJREFUaEPtl19IU3EUx/PPDMnS
         zcLQ1RQUwVhhQj34olE+SFJCSDQoxETEBwVffBDpQYgwYlCQhUnCaBQbioKoTMF6aeBL2EOhgkaomw5N
         jSa6e/qeca9cYndrOu8i7oHDlbvz+/0+9/s7v/M7HjmimaaApoCmgKaApoCmQBQKHEWsLop41UKPY6Wb
@@ -563,7 +572,87 @@
   <metadata name="label12.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <metadata name="ToolTip.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="ToolTip.TrayLocation" type="System.Drawing.Point, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a">
+    <value>17, 17</value>
+  </metadata>
+  <metadata name="groupBox1.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="mJoystickYTypeButtons.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="pictureBox7.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label15.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label16.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="mJoystickYTypeButtons.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="pictureBox7.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="pictureBox7.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAACgAAAAyCAYAAAAus5mQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAACxAAAAsQAa0jvXUAAAAGYktHRAD/AP8A/6C9p5MAAAAHdElNRQfbCBsHGzMQ7GEa
+        AAAAGXRFWHRDb21tZW50AENyZWF0ZWQgd2l0aCBHSU1QV4EOFwAAANJJREFUaEPt2NsKhDAMBND+/09X
+        W1KJJcReaBJhBHEf7HKcdbJoStiQABKwSyDnnMoeciNY0d0fgyE5rgBDIbvkSnoVGAIp4aowAlLDuSNH
+        cG7IGZw5cgVnhpRGCTW1GcRjazQ/Ws5JFcfa7PbnAuBu9EgQCdJ42Q1ieT3uweXoaCESRIJo8cc9gJKg
+        JCjJn0ryvNLoHoCmH5pO/uztncvneJFOYBe2W051/RLSCtfkU0hr3BTSCzeE9MapyCg4ERkN90JGxfXI
+        o3MOX44EkABL4AIrnP07ItQPBwAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <metadata name="label15.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="label16.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
   <metadata name="mLabelBase.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
+  </metadata>
+  <metadata name="pictureBox8.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="radioButton1.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="pictureBox8.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <data name="pictureBox8.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        iVBORw0KGgoAAAANSUhEUgAAACgAAAAyCAYAAAAus5mQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
+        YQUAAAAJcEhZcwAACxIAAAsSAdLdfvwAAAAGYktHRAAAAAAAAPlDu38AAAAHdElNRQfbCBsHGAJqHzLj
+        AAADZ0lEQVRoQ+2YS08TURTHmSnttCmh9EGhGwiFPgyJi9nJws/BsguFpLu2BBJeraLRuPKRGHVpQmLY
+        +AmI8QM0Jm5QRFATFSUUJRh5Op7/TW8zDG2nhXGGxLnJzUw7M/f+5px7/vecaWmxm20B2wK2BWwL2BY4
+        LxaQCSTf0dFxu729/a3P51uORqMPRFF8aSmgw+G4FgwGV/v7+0vj4+OlfD6vFItF1nHe09NzRLBPLYH0
+        er1L2Wz2K2BqtVwut+5yuV5bAZgfHh7+pgVbWFhQZmZmlEKhoBCUQha+bgUc5pTb2treACISiWzhiB4I
+        BJR0Os3cK8sy/sPatLwB4oSXp6endwVBKJyBzriXC4fDH7VrEW7u6+u7rwPIoh/BRgF1l1TgHfcGqcDm
+        GV7u+KNwtxYQvxHh5TsZCAXWTQRXZ2fnB4AMDAxsjY2NfZ+dnT3kCqB2hWGAJCW3YDFA4cg7t0YsFvsx
+        MTGxpZahmqGvunAWwIprIMhut7sEGAQG4ABSzSKNQDVrQQaCxY414vf7VwCC9UEa+IUk5cAIkFrgJyzo
+        8XhuJBKJh+W1owbZ/5cgDQFi/xwZGTHENc26siFAiCoWs1GDGzGO1sVyV1fX81QqZcTYhozBAKFNoVBo
+        DZq0uLi4V21XMGS2UwzCAJ1O58b8/Hzlca5hpxjP8Ee4i+VkMrmjHh16Vi+NMpykxoCVNYitRw2Ec0Ba
+        3SqA0L/JyclfaqDz4GptFGsNtmF1wBwD7O3tvTc0NLSL7AJrMh6P/5QkaTOTyXy2ytXVkoUC/YmOPZj1
+        wcHBx5QOHVkB2Uw2YwUfSobajWraV35JWglK0qrH4dih2sN0yLqADkF4cqW19aBI6RU6+dt0bdRzsRx3
+        u7fJzgo6gzRZG/UAcZ3B8U7RwzJms5ouYEiS1mA5NaSZ2qgL6HO5lrWAzIpV6uB6Vj3tvq4LeCEQeMRg
+        ND1Jv0dHR48x8YqOCvY9iD2SX1gbnfLMT/ycH3Gdapr9evC6gJCYq6J4eFkQjnJ+/3rU40ExrXhFcemi
+        18t2HA6CopvyyjtloediX28OGbkofS55jyJsamrqtxZWF7B8AyZ7UZ5Y/TmCQxjxiUKmvHQOsHhhKtD+
+        wD2NApp9n9zd3f2McoFtsyduaj5KXi419YB9s22B/9ECfwH7fdjYDZSOCAAAAABJRU5ErkJggg==
+</value>
+  </data>
+  <metadata name="radioButton1.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>False</value>
+  </metadata>
+  <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>213</value>
   </metadata>
 </root>

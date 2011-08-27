@@ -86,6 +86,11 @@ namespace My05HydraReading
 		{
 			delete components;
 		}
+		if(this->mInitialized)
+		{
+			this->SaveSettings(GetDefaultIniFilename(true), true);
+			this->SaveSettings(GetDefaultIniFilename(false), false);
+		}
 	}
 
 	System::Void MainForm::OnAboutClicked(System::Object^  sender, System::EventArgs^  e)
@@ -97,15 +102,9 @@ namespace My05HydraReading
 		mAboutForm->ShowDialog();
 	}
 
-	System::Void MainForm::OnOpen(System::Object^  sender, System::EventArgs^  e)
+	void MainForm::InitComboBoxes()
 	{
-		this->mTimer = gcnew System::Windows::Forms::Timer();
-		this->mTimer->Tick += gcnew System::EventHandler(this, &MainForm::OnTimerTick);
-		this->mTimer->Interval = 16;
-		this->mTimer->Enabled = true;
-
-		//    Combo Box Initialization
-		
+		//  Controller Selection
 		//let's prevent myself from screwing this up with the visual editor.
 		this->mControllerChoice->Items->Clear();
 		this->mControllerChoice->Items->Add("left controller");
@@ -156,17 +155,62 @@ namespace My05HydraReading
 		//Z
 		InitJoystickComboBox(this->mAxisZJoy);
 		InitAxisComboBox(this->mAxisZAxis);
+
+		//Pitch
+		InitJoystickComboBox(this->mAxisPitchJoy);
+		InitAxisComboBox(this->mAxisPitchAxis);
+		
+		//Yaw
+		InitJoystickComboBox(this->mAxisYawJoy);
+		InitAxisComboBox(this->mAxisYawAxis);
+
+		//Roll
+		InitJoystickComboBox(this->mAxisRollJoy);
+		InitAxisComboBox(this->mAxisRollAxis);
+
+		// Analog Stick
+		//X
+		InitJoystickComboBox(this->mJoystickXAxisJoy);
+		InitAxisComboBox(this->mJoystickXAxisAxis);
+		InitJoystickComboBox(this->mJoystickXButtonMinJoy);
+		InitButtonComboBox(this->mJoystickXButtonMinButton);
+		InitJoystickComboBox(this->mJoystickXButtonMaxJoy);
+		InitButtonComboBox(this->mJoystickXButtonMaxButton);
+		//Y
+		InitJoystickComboBox(this->mJoystickYAxisJoy);
+		InitAxisComboBox(this->mJoystickYAxisAxis);
+		InitJoystickComboBox(this->mJoystickYButtonMinJoy);
+		InitButtonComboBox(this->mJoystickYButtonMinButton);
+		InitJoystickComboBox(this->mJoystickYButtonMaxJoy);
+		InitButtonComboBox(this->mJoystickYButtonMaxButton);
+
+		// Trigger
+		InitJoystickComboBox(this->mTriggerJoy);
+		InitAxisComboBox(this->mTriggerAxis);
+		InitButtonComboBox(this->mTriggerButton);
+	}
+
+	System::Void MainForm::OnOpen(System::Object^  sender, System::EventArgs^  e)
+	{
+		this->mTimer = gcnew System::Windows::Forms::Timer();
+		this->mTimer->Tick += gcnew System::EventHandler(this, &MainForm::OnTimerTick);
+		this->mTimer->Interval = 16;
+		this->mTimer->Enabled = true;
+
+		//    Combo Box Initialization
+		this->InitComboBoxes();
+
 		
 		//has to be called after the other comboboxes have been set up, otherwise it might try to change an uninitialized combobox.
 		this->mControllerChoice->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::SelectedControllerChanged);
-		SelectedControllerChanged(sender, e); //force update
+		this->SelectedControllerChanged(sender, e); //force update
 
-		if(!LoadSettings(GetDefaultIniFilename(true), true) || !LoadSettings(GetDefaultIniFilename(false), false) )
+		if(!this->LoadSettings(GetDefaultIniFilename(true), true) || !this->LoadSettings(GetDefaultIniFilename(false), false) )
 		{
 			Error("Could not load settings!");
 			return;
 		}
-		mInitialized = true;
+		this->mInitialized = true;
 	}
 
 	void MainForm::Error(const std::string& message)
@@ -185,8 +229,7 @@ namespace My05HydraReading
 		this->mJoystickGroup->Visible = !display;
 		this->mPositionGroup->Visible = !display;
 		this->mRotationGroup->Visible = !display;
-
-		this->mTestGroup->Visible = !display;
+		this->mTriggerGroup->Visible = !display;
 
 		//base message
 		this->mLabelBase->Visible = display;
@@ -212,71 +255,71 @@ namespace My05HydraReading
 	}
 
 	const bool MainForm::SetControllerIndices()
+	{
+		//which controllers are connected?
+		std::vector<int> connectedControllers;
+		for(int i = 0; i < sixenseGetMaxControllers(); ++i)
 		{
-			//which controllers are connected?
-			std::vector<int> connectedControllers;
-			for(int i = 0; i < sixenseGetMaxControllers(); ++i)
+			if(sixenseIsControllerEnabled(i))
 			{
-				if(sixenseIsControllerEnabled(i))
-				{
-					connectedControllers.push_back(i);
-				}
+				connectedControllers.push_back(i);
 			}
-			//are there at least 2 controllers connected?
-			if(connectedControllers.size() < 2)
-			{
-#ifndef _DEBUG
-				this->Error("Not enough controllers connected! (2)");
-				return false;
-#else
-				//In debug mode, I'd like to be able to continue even if no controllers are connected.
-				mLeftControllerIndex = 0;
-				mRightControllerIndex = 1;
-				return true;
-#endif
-			}
-			//poll controller information - it seems inefficient to do that multiple times though
-			sixenseControllerData data[2];
-			if( sixenseGetNewestData(connectedControllers[0], data) != SIXENSE_SUCCESS ||
-			    sixenseGetNewestData(connectedControllers[1], data+1) != SIXENSE_SUCCESS )
-			{
-				this->Error("Could not poll data!");
-				return false;
-			}
-
-			// initialized?
-			if(data[0].which_hand == 0 || data[1].which_hand == 0)
-			{
-				this->mLabelBase->Text = "Please place the controllers in the base.";
-				DisplayBaseMessage(true);
-				return false;
-			}
-			// different hands?
-			if(data[0].which_hand == data[1].which_hand)
-			{
-				this->mLabelBase->Text = "Please place the controllers in different base docks.";
-				DisplayBaseMessage(true);
-				return false;
-			}
-			//yay, both are initialized and they correspond to different hands!
-			//let's set up the variables
-			DisplayBaseMessage(false);
-			if(data[0].which_hand == 1) // 1 is left, 2 is right.
-			{
-				assert(data[1].which_hand == 2);
-				mLeftControllerIndex = connectedControllers[0];
-				mRightControllerIndex = connectedControllers[1];
-			}
-			else
-			{
-				assert(data[0].which_hand == 2);
-				assert(data[1].which_hand == 1);
-				mLeftControllerIndex = connectedControllers[1];
-				mRightControllerIndex = connectedControllers[0];
-			}
-
-			return true;
 		}
+		//are there at least 2 controllers connected?
+		if(connectedControllers.size() < 2)
+		{
+#ifndef _DEBUG
+			this->Error("Not enough controllers connected! (2)");
+			return false;
+#else
+			//In debug mode, I'd like to be able to continue even if no controllers are connected.
+			mLeftControllerIndex = 0;
+			mRightControllerIndex = 1;
+			return true;
+#endif
+		}
+		//poll controller information - it seems inefficient to do that multiple times though
+		sixenseControllerData data[2];
+		if( sixenseGetNewestData(connectedControllers[0], data) != SIXENSE_SUCCESS ||
+			sixenseGetNewestData(connectedControllers[1], data+1) != SIXENSE_SUCCESS )
+		{
+			this->Error("Could not poll data!");
+			return false;
+		}
+
+		// initialized?
+		if(data[0].which_hand == 0 || data[1].which_hand == 0)
+		{
+			this->mLabelBase->Text = "Please place the controllers in the base.";
+			DisplayBaseMessage(true);
+			return false;
+		}
+		// different hands?
+		if(data[0].which_hand == data[1].which_hand)
+		{
+			this->mLabelBase->Text = "Please place the controllers in different base docks.";
+			DisplayBaseMessage(true);
+			return false;
+		}
+		//yay, both are initialized and they correspond to different hands!
+		//let's set up the variables
+		DisplayBaseMessage(false);
+		if(data[0].which_hand == 1) // 1 is left, 2 is right.
+		{
+			assert(data[1].which_hand == 2);
+			mLeftControllerIndex = connectedControllers[0];
+			mRightControllerIndex = connectedControllers[1];
+		}
+		else
+		{
+			assert(data[0].which_hand == 2);
+			assert(data[1].which_hand == 1);
+			mLeftControllerIndex = connectedControllers[1];
+			mRightControllerIndex = connectedControllers[0];
+		}
+
+		return true;
+	}
 
 	System::Void MainForm::OnTimerTick(System::Object^  sender, System::EventArgs^  e)
 	{
@@ -290,6 +333,7 @@ namespace My05HydraReading
 		{
 			return;
 		}
+		
 		int controllerToQuery = (this->mControllerChoice->SelectedIndex == 0 ? mLeftControllerIndex : mRightControllerIndex);
 		sixenseControllerData data;
 		if( sixenseGetNewestData(controllerToQuery, &data) != SIXENSE_SUCCESS )
@@ -303,8 +347,11 @@ namespace My05HydraReading
 			std::stringstream ss;
 			//ss<<++i;
 			//ss<<mControllerChoice->SelectedIndex;
-			ss << data.pos[0];
-			this->mLabelXAxisValue->Text = gcnew String(ss.str().c_str());
+			//ss << data.pos[0];
+			float x = data.pos[0];
+			ss << " - " << x;
+			//this->mLabelXAxisValue->Text = gcnew String(ss.str().c_str());
+			//this->mTriggerGroup->Text = gcnew String(ss.str().c_str());
 		}
 		{
 			std::stringstream ss;
@@ -315,8 +362,9 @@ namespace My05HydraReading
 			if(data.buttons & SIXENSE_BUTTON_START) ss << "Start ";
 			if(data.buttons & SIXENSE_BUTTON_BUMPER) ss << "Bumper ";
 			if(data.buttons & SIXENSE_BUTTON_JOYSTICK) ss << "Joystick ";
-			this->mPressedButtonsLabel->Text = gcnew String(ss.str().c_str());
+			//this->mPressedButtonsLabel->Text = gcnew String(ss.str().c_str());
 		}
+		
 	}
 
 	System::Void MainForm::UpdateBindings(System::Object^  sender, System::EventArgs^  e)

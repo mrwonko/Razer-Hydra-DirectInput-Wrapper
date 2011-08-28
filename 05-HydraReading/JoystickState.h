@@ -22,7 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #pragma once
 
-#define	NUM_ANALOG	16		/* Number of analog values which we will provide */
+#define	NUM_ANALOG	8		/* Number of analog values which we will provide */
 #define	NUM_DIGITAL	16		/* Number of digital values which we will provide */
 
 #pragma pack(push,1)		/* All fields in structure must be byte aligned. */

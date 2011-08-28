@@ -97,14 +97,14 @@ namespace My05HydraReading
 			box->Items->Add("Axis 6");
 			box->Items->Add("Axis 7");
 			box->Items->Add("Axis 8");
-			box->Items->Add("Axis 9");
+			/*box->Items->Add("Axis 9");
 			box->Items->Add("Axis 10");
 			box->Items->Add("Axis 11");
 			box->Items->Add("Axis 12");
 			box->Items->Add("Axis 13");
 			box->Items->Add("Axis 14");
 			box->Items->Add("Axis 15");
-			box->Items->Add("Axis 16");
+			box->Items->Add("Axis 16");*/
 			box->SelectedIndex = 0;
 		}
 
@@ -727,7 +727,7 @@ namespace My05HydraReading
 	{
 		OpenFileDialog^ openFileDialog1 = gcnew OpenFileDialog;
 
-		openFileDialog1->InitialDirectory = "c:\\";
+		//openFileDialog1->InitialDirectory = "c:\\";
 		openFileDialog1->Filter = "ini files (*.ini)|*.ini|All files (*.*)|*.*";
 		openFileDialog1->FilterIndex = 1;
 		openFileDialog1->RestoreDirectory = true;
@@ -882,10 +882,10 @@ namespace My05HydraReading
 		float pitch = asin(data.rot_mat[2][1]);
 		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::ePitch], pitch * float(180.0 / M_PI));
 
-		float yaw = atan2(data.rot_mat[0][1], data.rot_mat[1][1]);
+		float yaw = atan2(-data.rot_mat[2][0], data.rot_mat[2][2]);
 		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eYaw], yaw * float(180.0 / M_PI));
 
-		float roll = atan2(-data.rot_mat[2][0], data.rot_mat[2][2]);
+		float roll = atan2(data.rot_mat[0][1], data.rot_mat[1][1]);
 		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eRoll], roll * float(180.0 / M_PI));
 
 		//Trigger

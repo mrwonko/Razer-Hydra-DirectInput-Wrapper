@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 #include "StdAfx.h"
 #include "ControllerMapping.h"
+#include "JoystickState.h"
 #include <Windows.h>
 #include <sstream>
 
@@ -207,57 +208,57 @@ const bool ControllerMapping::Load(const std::wstring& filename, const wchar_t* 
 	const wchar_t* filename_c = filename.c_str();
 	//buttons
 	if(!ReadInt(L"button_1",			L"joystick", joy,  filename_c, Buttons[eButton1].Joy,    -1, 3)) return false;
-	if(!ReadInt(L"button_1",			L"button",   L"0", filename_c, Buttons[eButton1].Button, 0, 15)) return false;
+	if(!ReadInt(L"button_1",			L"button",   L"0", filename_c, Buttons[eButton1].Button, 0, NUM_DIGITAL-1)) return false;
 
 	if(!ReadInt(L"button_2",			L"joystick", joy,  filename_c, Buttons[eButton2].Joy,    -1, 3)) return false;
-	if(!ReadInt(L"button_2",			L"button",   L"1", filename_c, Buttons[eButton2].Button, 0, 15)) return false;
+	if(!ReadInt(L"button_2",			L"button",   L"1", filename_c, Buttons[eButton2].Button, 0, NUM_DIGITAL-1)) return false;
 
 	if(!ReadInt(L"button_3",			L"joystick", joy,  filename_c, Buttons[eButton3].Joy,    -1, 3)) return false;
-	if(!ReadInt(L"button_3",			L"button",   L"2", filename_c, Buttons[eButton3].Button, 0, 15)) return false;
+	if(!ReadInt(L"button_3",			L"button",   L"2", filename_c, Buttons[eButton3].Button, 0, NUM_DIGITAL-1)) return false;
 
 	if(!ReadInt(L"button_4",			L"joystick", joy,  filename_c, Buttons[eButton4].Joy   , -1, 3)) return false;
-	if(!ReadInt(L"button_4",			L"button",   L"3", filename_c, Buttons[eButton4].Button, 0, 15)) return false;
+	if(!ReadInt(L"button_4",			L"button",   L"3", filename_c, Buttons[eButton4].Button, 0, NUM_DIGITAL-1)) return false;
 
 	if(!ReadInt(L"button_start",		L"joystick", joy,  filename_c, Buttons[eButtonStart].Joy,    -1, 3)) return false;
-	if(!ReadInt(L"button_start",		L"button",   L"7", filename_c, Buttons[eButtonStart].Button, 0, 15)) return false;
+	if(!ReadInt(L"button_start",		L"button",   L"7", filename_c, Buttons[eButtonStart].Button, 0, NUM_DIGITAL-1)) return false;
 
 	if(!ReadInt(L"button_analog_stick",	L"joystick", joy,  filename_c, Buttons[eButtonJoystick].Joy,    -1, 3)) return false;
-	if(!ReadInt(L"button_analog_stick",	L"button",   L"6", filename_c, Buttons[eButtonJoystick].Button, 0, 15)) return false;
+	if(!ReadInt(L"button_analog_stick",	L"button",   L"6", filename_c, Buttons[eButtonJoystick].Button, 0, NUM_DIGITAL-1)) return false;
 
 	if(!ReadInt(L"button_bumper",		L"joystick", joy,  filename_c, Buttons[eButtonBumper].Joy,    -1, 3)) return false;
-	if(!ReadInt(L"button_bumper",		L"button",   L"4", filename_c, Buttons[eButtonBumper].Button, 0, 15)) return false;
+	if(!ReadInt(L"button_bumper",		L"button",   L"4", filename_c, Buttons[eButtonBumper].Button, 0, NUM_DIGITAL-1)) return false;
 
 	//  axes
 
 	//position
 	if(!ReadInt(L"axis_x", L"joystick", joy,      filename_c, Position[0].Joy,  -1, 3)) return false;
-	if(!ReadInt(L"axis_x", L"axis",     L"0",     filename_c, Position[0].Axis, 0, 15)) return false;
+	if(!ReadInt(L"axis_x", L"axis",     L"0",     filename_c, Position[0].Axis, 0, NUM_ANALOG-1)) return false;
 	if(!ReadBool(L"axis_x",L"inverted", L"false", filename_c, Position[0].Inverted)) return false;
 	if(!ReadInt(L"axis_x", L"range",    L"100",   filename_c, Position[0].Range, 0, 180)) return false;
 
 	if(!ReadInt(L"axis_y", L"joystick", joy,      filename_c, Position[1].Joy,  -1, 3)) return false;
-	if(!ReadInt(L"axis_y", L"axis",     L"1",     filename_c, Position[1].Axis, 0, 15)) return false;
+	if(!ReadInt(L"axis_y", L"axis",     L"1",     filename_c, Position[1].Axis, 0, NUM_ANALOG-1)) return false;
 	if(!ReadBool(L"axis_y",L"inverted", L"false", filename_c, Position[1].Inverted)) return false;
 	if(!ReadInt(L"axis_y", L"range",    L"100",   filename_c, Position[1].Range, 0, 180)) return false;
 
 	if(!ReadInt(L"axis_z", L"joystick", joy,      filename_c, Position[2].Joy,  -1, 3)) return false;
-	if(!ReadInt(L"axis_z", L"axis",     L"2",     filename_c, Position[2].Axis, 0, 15)) return false;
+	if(!ReadInt(L"axis_z", L"axis",     L"2",     filename_c, Position[2].Axis, 0, NUM_ANALOG-1)) return false;
 	if(!ReadBool(L"axis_z",L"inverted", L"false", filename_c, Position[2].Inverted)) return false;
 	if(!ReadInt(L"axis_z", L"range",    L"100",   filename_c, Position[2].Range, 0, 180)) return false;
 
 	//rotation
 	if(!ReadInt(L"axis_pitch", L"joystick", joy,      filename_c, Rotation[ePitch].Joy,  -1, 3)) return false;
-	if(!ReadInt(L"axis_pitch", L"axis",     L"3",     filename_c, Rotation[ePitch].Axis, 0, 15)) return false;
+	if(!ReadInt(L"axis_pitch", L"axis",     L"3",     filename_c, Rotation[ePitch].Axis, 0, NUM_ANALOG-1)) return false;
 	if(!ReadBool(L"axis_pitch",L"inverted", L"false", filename_c, Rotation[ePitch].Inverted)) return false;
 	if(!ReadInt(L"axis_pitch",   L"range",    L"45",  filename_c, Rotation[ePitch].Range, 0, 180)) return false;
 
 	if(!ReadInt(L"axis_yaw",   L"joystick", joy,      filename_c, Rotation[eYaw].Joy,    -1, 3)) return false;
-	if(!ReadInt(L"axis_yaw",   L"axis",     L"4",     filename_c, Rotation[eYaw].Axis,   0, 15)) return false;
+	if(!ReadInt(L"axis_yaw",   L"axis",     L"4",     filename_c, Rotation[eYaw].Axis,   0, NUM_ANALOG-1)) return false;
 	if(!ReadBool(L"axis_yaw",  L"inverted", L"false", filename_c, Rotation[eYaw].Inverted)) return false;
 	if(!ReadInt(L"axis_yaw",   L"range",    L"45",    filename_c, Rotation[eYaw].Range, 0, 180)) return false;
 
 	if(!ReadInt(L"axis_roll",  L"joystick", joy,      filename_c, Rotation[eRoll].Joy,   -1, 3)) return false;
-	if(!ReadInt(L"axis_roll" , L"axis",     L"5",     filename_c, Rotation[eRoll].Axis,  0, 15)) return false;
+	if(!ReadInt(L"axis_roll" , L"axis",     L"5",     filename_c, Rotation[eRoll].Axis,  0, NUM_ANALOG-1)) return false;
 	if(!ReadBool(L"axis_roll", L"inverted", L"false", filename_c, Rotation[eRoll].Inverted)) return false;
 	if(!ReadInt(L"axis_roll",  L"range",    L"45",    filename_c, Rotation[eRoll].Range, 0, 180)) return false;
 
@@ -265,43 +266,43 @@ const bool ControllerMapping::Load(const std::wstring& filename, const wchar_t* 
 	if(!ReadBool(L"trigger", L"isAxis", L"false", filename_c, TriggerIsAxis)) return false;
 	if(TriggerIsAxis)
 	{
-		if(!ReadInt(L"trigger", L"joystick", joy,      filename_c, TriggerAxis.Joy,  0, 4)) return false;
-		if(!ReadInt(L"trigger", L"axis",     L"8",     filename_c, TriggerAxis.Axis, 0, 15)) return false;
+		if(!ReadInt(L"trigger", L"joystick", joy,      filename_c, TriggerAxis.Joy,  -1, 3)) return false;
+		if(!ReadInt(L"trigger", L"axis",     L"7",     filename_c, TriggerAxis.Axis, 0, NUM_ANALOG-1)) return false;
 	}
 	else
 	{
-		if(!ReadInt(L"trigger", L"joystick", joy,  filename_c, TriggerButton.Joy,    0, 4)) return false;
-		if(!ReadInt(L"trigger", L"button",   L"5", filename_c, TriggerButton.Button, 0, 15)) return false;
+		if(!ReadInt(L"trigger", L"joystick", joy,  filename_c, TriggerButton.Joy,    -1, 3)) return false;
+		if(!ReadInt(L"trigger", L"button",   L"5", filename_c, TriggerButton.Button, 0, NUM_DIGITAL-1)) return false;
 	}
 	
 	//analog stick X
 	if(!ReadBool(L"analog_stick_x", L"isAxis", L"true", filename_c, JoystickXIsAxis)) return false;
 	if(JoystickXIsAxis)
 	{
-		if(!ReadInt(L"analog_stick_x", L"joystick", joy,      filename_c, JoystickXAxis.Joy,  0, 4)) return false;
-		if(!ReadInt(L"analog_stick_x", L"axis",     L"6",     filename_c, JoystickXAxis.Axis, 0, 15)) return false;
+		if(!ReadInt(L"analog_stick_x", L"joystick", joy,      filename_c, JoystickXAxis.Joy,  -1, 3)) return false;
+		if(!ReadInt(L"analog_stick_x", L"axis",     L"6",     filename_c, JoystickXAxis.Axis, 0, NUM_ANALOG-1)) return false;
 	}
 	else
 	{
-		if(!ReadInt(L"analog_stick_x", L"joystick_left", joy,  filename_c, JoystickXButtons.Min.Joy,    0, 4)) return false;
-		if(!ReadInt(L"analog_stick_x", L"button_left",   L"9", filename_c, JoystickXButtons.Min.Button, 0, 15)) return false;
-		if(!ReadInt(L"analog_stick_x", L"joystick_right", joy,   filename_c, JoystickXButtons.Max.Joy,    0, 4)) return false;
-		if(!ReadInt(L"analog_stick_x", L"button_right",   L"10", filename_c, JoystickXButtons.Max.Button, 0, 15)) return false;
+		if(!ReadInt(L"analog_stick_x", L"joystick_left", joy,  filename_c, JoystickXButtons.Min.Joy,    -1, 3)) return false;
+		if(!ReadInt(L"analog_stick_x", L"button_left",   L"9", filename_c, JoystickXButtons.Min.Button, 0, NUM_DIGITAL-1)) return false;
+		if(!ReadInt(L"analog_stick_x", L"joystick_right", joy,   filename_c, JoystickXButtons.Max.Joy,    -1, 3)) return false;
+		if(!ReadInt(L"analog_stick_x", L"button_right",   L"10", filename_c, JoystickXButtons.Max.Button, 0, NUM_DIGITAL-1)) return false;
 	}
 	
 	//analog stick Y
 	if(!ReadBool(L"analog_stick_y", L"isAxis", L"true", filename_c, JoystickYIsAxis)) return false;
 	if(JoystickXIsAxis)
 	{
-		if(!ReadInt(L"analog_stick_y", L"joystick", joy,      filename_c, JoystickYAxis.Joy, 0, 4)) return false;
-		if(!ReadInt(L"analog_stick_y", L"axis",     L"7",     filename_c, JoystickYAxis.Axis, 0, 15)) return false;
+		if(!ReadInt(L"analog_stick_y", L"joystick", joy,      filename_c, JoystickYAxis.Joy, -1, 3)) return false;
+		if(!ReadInt(L"analog_stick_y", L"axis",     L"7",     filename_c, JoystickYAxis.Axis, 0, NUM_ANALOG-1)) return false;
 	}
 	else
 	{
-		if(!ReadInt(L"analog_stick_y", L"joystick_left", joy,   filename_c, JoystickYButtons.Min.Joy, 0, 4)) return false;
-		if(!ReadInt(L"analog_stick_y", L"button_left",   L"11", filename_c, JoystickYButtons.Min.Button, 0, 15)) return false;
-		if(!ReadInt(L"analog_stick_y", L"joystick_right", joy,   filename_c, JoystickYButtons.Max.Joy, 0, 4)) return false;
-		if(!ReadInt(L"analog_stick_y", L"button_right",   L"12", filename_c, JoystickYButtons.Max.Button, 0, 15)) return false;
+		if(!ReadInt(L"analog_stick_y", L"joystick_left", joy,   filename_c, JoystickYButtons.Min.Joy, -1, 3)) return false;
+		if(!ReadInt(L"analog_stick_y", L"button_left",   L"11", filename_c, JoystickYButtons.Min.Button, 0, NUM_DIGITAL-1)) return false;
+		if(!ReadInt(L"analog_stick_y", L"joystick_right", joy,   filename_c, JoystickYButtons.Max.Joy, -1, 3)) return false;
+		if(!ReadInt(L"analog_stick_y", L"button_right",   L"12", filename_c, JoystickYButtons.Max.Button, 0, NUM_DIGITAL-1)) return false;
 	}
 
 	return true;

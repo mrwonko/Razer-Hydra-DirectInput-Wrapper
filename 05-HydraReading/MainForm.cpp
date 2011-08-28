@@ -872,7 +872,7 @@ namespace My05HydraReading
 		//Position
 		SetAnalogPosRot(mJoyStates, mapping.Position[0], data.pos[0]-origin[0]);
 		SetAnalogPosRot(mJoyStates, mapping.Position[1], data.pos[1]-origin[1]);
-		SetAnalogPosRot(mJoyStates, mapping.Position[1], data.pos[2]-origin[2]);
+		SetAnalogPosRot(mJoyStates, mapping.Position[2], data.pos[2]-origin[2]);
 
 		//Rotation
 

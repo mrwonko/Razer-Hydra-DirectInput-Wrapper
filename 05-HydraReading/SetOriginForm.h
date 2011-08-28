@@ -75,9 +75,6 @@ namespace My05HydraReading {
 			System::Windows::Forms::Label^  label1;
 			label1 = (gcnew System::Windows::Forms::Label());
 			this->SuspendLayout();
-			// 
-			// label1
-			// 
 			label1->AutoSize = true;
 			label1->Location = System::Drawing::Point(12, 9);
 			label1->Name = L"label1";
@@ -85,9 +82,6 @@ namespace My05HydraReading {
 			label1->TabIndex = 0;
 			label1->Text = L"Hold the controller in the position that\r\nshould correspond to the middle of the\r" 
 				L"\nposition axes and press any key.";
-			// 
-			// SetOriginForm
-			// 
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(212, 58);

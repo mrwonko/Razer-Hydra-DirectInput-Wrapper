@@ -878,6 +878,7 @@ namespace My05HydraReading
 
 		//thanks, http://www.paulbourke.net/geometry/eulerangle/
 		//still I'm not quite sure if this is correct... needs verifying.
+		//okay, thanks to Opadong it's now verified.
 		
 		float pitch = asin(data.rot_mat[2][1]);
 		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::ePitch], pitch * float(180.0 / M_PI));

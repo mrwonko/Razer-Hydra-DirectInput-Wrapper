@@ -1,3 +1,25 @@
+/*
+===========================================================================
+Copyright (C) 2011 Willi Schinmeyer
+
+This file is part of the Razer Hydra DirectInput Wrapper source code.
+
+Razer Hydra DirectInput Wrapper source code is free software; you can redistribute it
+and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License,
+or (at your option) any later version.
+
+Razer Hydra DirectInput Wrapper source code is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Razer Hydra DirectInput Wrapper source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+===========================================================================
+*/
+
 #pragma once
 
 #include <sstream>
@@ -5,7 +27,6 @@
 #include <vector>
 #include <cassert>
 #include <sixense.h>
-#include "AboutForm.h"
 
 struct ControllerMapping;
 
@@ -18,6 +39,10 @@ namespace My05HydraReading
 	using namespace System::Windows::Forms;
 	using namespace System::Data;
 	using namespace System::Drawing;
+
+	ref class MainForm; //designer displays first class in header -.-
+	ref class SetOriginForm;
+	ref struct JoystickState;
 
 	/// <summary>
 	/// Zusammenfassung für MainForm
@@ -141,6 +166,9 @@ namespace My05HydraReading
 		System::Windows::Forms::GroupBox^  mJoystickGroup;
 		System::Windows::Forms::GroupBox^  mControlGroup;
 		System::Windows::Forms::GroupBox^  mRotationGroup;
+private: System::Windows::Forms::NumericUpDown^  mUpdateInterval;
+private: System::Windows::Forms::Label^  mUpdateIntervalLabel;
+
 		 System::Windows::Forms::GroupBox^  mTriggerGroup;
 		
 #pragma region Windows Form Designer generated code
@@ -240,6 +268,8 @@ namespace My05HydraReading
 			this->mAxisYawInvert = (gcnew System::Windows::Forms::CheckBox());
 			this->mJoystickYAxisAxis = (gcnew System::Windows::Forms::ComboBox());
 			this->mTriggerButton = (gcnew System::Windows::Forms::ComboBox());
+			this->mUpdateIntervalLabel = (gcnew System::Windows::Forms::Label());
+			this->mUpdateInterval = (gcnew System::Windows::Forms::NumericUpDown());
 			this->mJoystickYTypeAxis = (gcnew System::Windows::Forms::RadioButton());
 			this->mJoystickYTypeButtons = (gcnew System::Windows::Forms::RadioButton());
 			this->mJoystickYAxisJoy = (gcnew System::Windows::Forms::ComboBox());
@@ -332,6 +362,7 @@ namespace My05HydraReading
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mAxisRollRange))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mAxisPitchRange))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mAxisYawRange))->BeginInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mUpdateInterval))->BeginInit();
 			groupBox1->SuspendLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(pictureBox7))->BeginInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(pictureBox8))->BeginInit();
@@ -375,6 +406,7 @@ namespace My05HydraReading
 			ToolTip->SetToolTip(mOriginButton, L"Sets the origin of the current controller, i.e. the point at which the position a" 
 				L"xes are in the middle position.");
 			mOriginButton->UseVisualStyleBackColor = true;
+			mOriginButton->Click += gcnew System::EventHandler(this, &MainForm::OnSetOriginClicked);
 			// 
 			// mAboutButton
 			// 
@@ -1221,6 +1253,28 @@ namespace My05HydraReading
 			ToolTip->SetToolTip(this->mTriggerButton, L"The desired Axis. Not all games support axes 7 and 8, even less axes 9 and up.");
 			this->mTriggerButton->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			// 
+			// mUpdateIntervalLabel
+			// 
+			this->mUpdateIntervalLabel->AutoSize = true;
+			this->mUpdateIntervalLabel->Location = System::Drawing::Point(427, 547);
+			this->mUpdateIntervalLabel->Name = L"mUpdateIntervalLabel";
+			this->mUpdateIntervalLabel->Size = System::Drawing::Size(101, 13);
+			this->mUpdateIntervalLabel->TabIndex = 53;
+			this->mUpdateIntervalLabel->Text = L"Update interval (ms)";
+			ToolTip->SetToolTip(this->mUpdateIntervalLabel, resources->GetString(L"mUpdateIntervalLabel.ToolTip"));
+			// 
+			// mUpdateInterval
+			// 
+			this->mUpdateInterval->Location = System::Drawing::Point(534, 545);
+			this->mUpdateInterval->Maximum = System::Decimal(gcnew cli::array< System::Int32 >(4) {1000, 0, 0, 0});
+			this->mUpdateInterval->Minimum = System::Decimal(gcnew cli::array< System::Int32 >(4) {1, 0, 0, 0});
+			this->mUpdateInterval->Name = L"mUpdateInterval";
+			this->mUpdateInterval->Size = System::Drawing::Size(49, 20);
+			this->mUpdateInterval->TabIndex = 54;
+			ToolTip->SetToolTip(this->mUpdateInterval, resources->GetString(L"mUpdateInterval.ToolTip"));
+			this->mUpdateInterval->Value = System::Decimal(gcnew cli::array< System::Int32 >(4) {16, 0, 0, 0});
+			this->mUpdateInterval->ValueChanged += gcnew System::EventHandler(this, &MainForm::OnUpdateIntervalChanged);
+			// 
 			// groupBox1
 			// 
 			groupBox1->Controls->Add(this->mJoystickYTypeAxis);
@@ -1619,6 +1673,8 @@ namespace My05HydraReading
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(595, 577);
+			this->Controls->Add(this->mUpdateInterval);
+			this->Controls->Add(this->mUpdateIntervalLabel);
 			this->Controls->Add(this->mTriggerGroup);
 			this->Controls->Add(this->mControlGroup);
 			this->Controls->Add(this->mJoystickGroup);
@@ -1654,6 +1710,7 @@ namespace My05HydraReading
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mAxisRollRange))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mAxisPitchRange))->EndInit();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mAxisYawRange))->EndInit();
+			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(this->mUpdateInterval))->EndInit();
 			groupBox1->ResumeLayout(false);
 			groupBox1->PerformLayout();
 			(cli::safe_cast<System::ComponentModel::ISupportInitialize^  >(pictureBox7))->EndInit();
@@ -1670,6 +1727,7 @@ namespace My05HydraReading
 			this->mTriggerGroup->PerformLayout();
 			this->ResumeLayout(false);
 			this->PerformLayout();
+			//test
 
 		}
 #pragma endregion
@@ -1694,8 +1752,10 @@ namespace My05HydraReading
 		**/
 		const bool SetBase();
 
+	public:
 		static const int LEFT_CONTROLLER = 0;
 		static const int RIGHT_CONTROLLER = 1;
+	private:
 
 		int* mControllerIndices;
 
@@ -1711,7 +1771,7 @@ namespace My05HydraReading
 		**/
 		System::Void OnTimerTick(System::Object^  sender, System::EventArgs^  e);
 
-		AboutForm^ mAboutForm;
+		//AboutForm^ mAboutForm;
 		System::Void OnAboutClicked(System::Object^  sender, System::EventArgs^  e);
 		
 		bool mInitialized;
@@ -1745,6 +1805,25 @@ namespace My05HydraReading
 		void ProcessRadioButtons();
 		System::Void mSaveButton_Click(System::Object^  sender, System::EventArgs^  e);
 		System::Void mLoadButton_Click(System::Object^  sender, System::EventArgs^  e);
-};
+		System::Void OnUpdateIntervalChanged(System::Object^  sender, System::EventArgs^  e)
+		{
+			this->mTimer->Interval = System::Convert::ToInt32(this->mUpdateInterval->Value);
+		}
+
+		float** mOrigins;
+
+		const bool LoadOrigin(int side);
+		const bool SaveOrigin(int side);
+
+		SetOriginForm^ mSetOriginForm;
+
+		System::Void OnSetOriginClicked(System::Object^  sender, System::EventArgs^  e);
+		System::Void OnSetOriginClosed(System::Object^  sender, System::Windows::Forms::FormClosedEventArgs^  e);
+		
+		static const unsigned int NUM_VIRTUAL_JOYSTICKS = 4;
+
+		HANDLE* mJoyHandles;
+		JoystickState* mJoyStates;
+	};
 }
 

@@ -1,3 +1,25 @@
+/*
+===========================================================================
+Copyright (C) 2011 Willi Schinmeyer
+
+This file is part of the Razer Hydra DirectInput Wrapper source code.
+
+Razer Hydra DirectInput Wrapper source code is free software; you can redistribute it
+and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License,
+or (at your option) any later version.
+
+Razer Hydra DirectInput Wrapper source code is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Razer Hydra DirectInput Wrapper source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+===========================================================================
+*/
+
 #include "StdAfx.h"
 #include "ControllerMapping.h"
 #include <Windows.h>
@@ -11,27 +33,31 @@ ControllerMapping::ControllerMapping() :
 	//unfortunately I can't give ButtonMapping a constructor to do this since it wouldn't be POD anymore and I couldn't use unions anymore - not that I needed to...
 	for(ButtonMapping* bm = Buttons; bm != Buttons + 7; ++bm)
 	{
-		bm->Joy = 0;
+		bm->Joy = -1;
 		bm->Button = 0;
 	}
 	for(AxisMapping* am = Position; am != Position + 3; ++am)
 	{
-		am->Joy = 0;
+		am->Joy = -1;
 		am->Axis = 0;
+		am->Center = 0;
 	}
 	for(AxisMapping* am = Rotation; am != Rotation + 3; ++am)
 	{
-		am->Joy = 0;
+		am->Joy = -1;
 		am->Axis = 0;
 	}
 
-	TriggerAxis.Joy = 0;
+	TriggerAxis.Joy = -1;
 	TriggerAxis.Axis = 0;
 
-	JoystickXAxis.Joy = 0;
+	JoystickXAxis.Joy = -1;
 	JoystickXAxis.Axis = 0;
-	JoystickYAxis.Joy = 0;
+	JoystickXAxis.Inverted = false;
+
+	JoystickYAxis.Joy = -1;
 	JoystickYAxis.Axis = 0;
+	JoystickYAxis.Inverted = false;
 }
 
 namespace

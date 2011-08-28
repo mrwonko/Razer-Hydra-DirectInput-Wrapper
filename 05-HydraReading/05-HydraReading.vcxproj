@@ -110,6 +110,7 @@
     <ClCompile Include="ControllerMapping.cpp" />
     <ClCompile Include="InitForm.cpp" />
     <ClCompile Include="MainForm.cpp" />
+    <ClCompile Include="SetOriginForm.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
@@ -127,6 +128,9 @@
       <FileType>CppForm</FileType>
     </ClInclude>
     <ClInclude Include="resource.h" />
+    <ClInclude Include="SetOriginForm.h">
+      <FileType>CppForm</FileType>
+    </ClInclude>
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
@@ -142,6 +146,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="InitForm.resx">
       <DependentUpon>InitForm.h</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SetOriginForm.resx">
+      <DependentUpon>SetOriginForm.h</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

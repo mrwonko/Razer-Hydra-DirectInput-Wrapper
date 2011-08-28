@@ -20,9 +20,6 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
-// stdafx.h : Includedatei für Standardsystem-Includedateien
-// oder häufig verwendete projektspezifische Includedateien,
-// die nur in unregelmäßigen Abständen geändert werden.
-#pragma once
+#include "StdAfx.h"
+#include "SetOriginForm.h"
 
-// TODO: Hier auf zusätzliche Header, die das Programm erfordert, verweisen.

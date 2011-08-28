@@ -569,6 +569,22 @@
   <metadata name="label12.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <data name="mUpdateIntervalLabel.ToolTip" xml:space="preserve">
+    <value>How often the virtual joystick gets updated, in milliseconds.
+Keep in mind that the rate at which the Hydra updates is limited.
+Games also usually just check the current state once per frame, so
+you don't need to update more often than that. On the other hand
+updating more often may reduce the delay introduced by the
+Hydra and the game not updating in sync.</value>
+  </data>
+  <data name="mUpdateInterval.ToolTip" xml:space="preserve">
+    <value>How often the virtual joystick gets updated, in milliseconds.
+Keep in mind that the rate at which the Hydra updates is limited.
+Games also usually just check the current state once per frame, so
+you don't need to update more often than that. On the other hand
+updating more often may reduce the delay introduced by the
+Hydra and the game not updating in sync.</value>
+  </data>
   <metadata name="groupBox1.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
@@ -598,7 +614,7 @@
   <data name="pictureBox8.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>
         iVBORw0KGgoAAAANSUhEUgAAACgAAAAyCAYAAAAus5mQAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8
-        YQUAAAAJcEhZcwAACw0AAAsNAe0HwCwAAAAGYktHRAAAAAAAAPlDu38AAAAHdElNRQfbCBsHGAJqHzLj
+        YQUAAAAJcEhZcwAACwwAAAsMAT9AIsgAAAAGYktHRAAAAAAAAPlDu38AAAAHdElNRQfbCBsHGAJqHzLj
         AAADZ0lEQVRoQ+2YS08TURTHmSnttCmh9EGhGwiFPgyJi9nJws/BsguFpLu2BBJeraLRuPKRGHVpQmLY
         +AmI8QM0Jm5QRFATFSUUJRh5Op7/TW8zDG2nhXGGxLnJzUw7M/f+5px7/vecaWmxm20B2wK2BWwL2BY4
         LxaQCSTf0dFxu729/a3P51uORqMPRFF8aSmgw+G4FgwGV/v7+0vj4+OlfD6vFItF1nHe09NzRLBPLYH0

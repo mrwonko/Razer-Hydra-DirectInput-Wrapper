@@ -1,8 +1,35 @@
+/*
+===========================================================================
+Copyright (C) 2011 Willi Schinmeyer
+
+This file is part of the Razer Hydra DirectInput Wrapper source code.
+
+Razer Hydra DirectInput Wrapper source code is free software; you can redistribute it
+and/or modify it under the terms of the GNU General Public License as
+published by the Free Software Foundation; either version 2 of the License,
+or (at your option) any later version.
+
+Razer Hydra DirectInput Wrapper source code is distributed in the hope that it will be
+useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Razer Hydra DirectInput Wrapper source code; if not, write to the Free Software
+Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+===========================================================================
+*/
+
 #include "stdafx.h"
 #include "MainForm.h"
 #include <Windows.h>
 #include <sstream>
 #include "ControllerMapping.h"
+#include "AboutForm.h"
+#include "SetOriginForm.h"
+#include "PPJIoctl.h" //PP Joy IOCTL (i/o control?)
+#include "JoystickState.h"
+#include <cmath>
 
 #include <fstream>
 
@@ -15,6 +42,11 @@ namespace My05HydraReading
 			wchar_t dir[MAX_PATH];
 			GetCurrentDirectory(MAX_PATH, dir);
 			return std::wstring(dir) + (left ? L"/settingsLeft.ini" :  L"/settingsRight.ini");
+		}
+
+		std::wstring GetDefaultIniFilename(int side)
+		{
+			return GetDefaultIniFilename(side == MainForm::LEFT_CONTROLLER ? true : false);
 		}
 
 		// "Joy X" selection - width: 50
@@ -84,14 +116,59 @@ namespace My05HydraReading
 			Marshal::FreeHGlobal(IntPtr((void*)chars));
 			return os;
 		}
+
+		const bool IniReadFloat(const wchar_t* category, const wchar_t* key, const wchar_t* defaultvalue, const wchar_t* filename, float& result)
+		{
+			//GetPrivateProfileString() may truncate, but such long strings are most likely invalid anyway
+			wchar_t buffer[64];
+			if(!GetPrivateProfileString(category, key, defaultvalue, buffer, 64, filename)) return false;
+			std::wstringstream wss;
+			wss << buffer;
+			wss >> result;
+			return true;
+		}
+
+		const bool IniReadVec3f(const wchar_t* category, const wchar_t* filename, float* result)
+		{
+			return IniReadFloat(category, L"x", L"0", filename, result[0]) &&
+				   IniReadFloat(category, L"y", L"0", filename, result[1]) &&
+				   IniReadFloat(category, L"z", L"0", filename, result[2]);
+		}
+		
+		const bool IniWriteFloat(const wchar_t* category, const wchar_t* key, float value, const wchar_t* filename)
+		{
+			std::wstringstream wss;
+			wss<<value;
+			return WritePrivateProfileString(category, key, wss.str().c_str(), filename) == TRUE;
+		}
+
+		const bool IniWriteVec3f(const wchar_t* category, float* value, const wchar_t* filename)
+		{
+			return IniWriteFloat(category, L"x", value[0], filename) &&
+				   IniWriteFloat(category, L"y", value[1], filename) &&
+				   IniWriteFloat(category, L"z", value[2], filename);
+		}
 	}
 
 	MainForm::MainForm(void) :
 		mInitialized(false),
 		mIgnoreBindingChanges(true),
 		mControllerIndices(new int[2]),
-		mControllerMappings(new ControllerMapping[2])
+		mControllerMappings(new ControllerMapping[2]),
+		mOrigins(new float*[2]),
+		mSetOriginForm(nullptr),
+		mJoyHandles(new HANDLE[NUM_VIRTUAL_JOYSTICKS]),
+		mJoyStates(new JoystickState[NUM_VIRTUAL_JOYSTICKS])
 	{
+		this->mOrigins[0] = new float[3];
+		this->mOrigins[1] = new float[3];
+		for(int cont = 0; cont < 2; ++cont)
+		{
+			for(int dim = 0; dim < 3; ++dim)
+			{
+				this->mOrigins[cont][dim] = 0.0f;
+			}
+		}
 		this->mControllerIndices[0] = -1;
 		this->mControllerIndices[1] = -1;
 		this->InitializeComponent();
@@ -119,6 +196,14 @@ namespace My05HydraReading
 		{
 			delete[] this->mControllerMappings;
 		}
+		if(this->mOrigins)
+		{
+			delete[] this->mOrigins[LEFT_CONTROLLER];
+			delete[] this->mOrigins[RIGHT_CONTROLLER];
+			delete[] this->mOrigins;
+		}
+		if(this->mJoyHandles) delete[] this->mJoyHandles;
+		if(this->mJoyStates) delete[] this->mJoyStates;
 	}
 
 	//This doesn't work if I put it in the finalizer - seems that gets called at a time where stuff essential for the STL is not available anymore.
@@ -126,18 +211,9 @@ namespace My05HydraReading
 	{
 		if(this->mInitialized)
 		{
-			this->mControllerMappings[LEFT_CONTROLLER].Save(GetDefaultIniFilename(true));
-			this->mControllerMappings[RIGHT_CONTROLLER].Save(GetDefaultIniFilename(false));
+			this->mControllerMappings[LEFT_CONTROLLER].Save(GetDefaultIniFilename(LEFT_CONTROLLER));
+			this->mControllerMappings[RIGHT_CONTROLLER].Save(GetDefaultIniFilename(RIGHT_CONTROLLER));
 		}
-	}
-
-	System::Void MainForm::OnAboutClicked(System::Object^  sender, System::EventArgs^  e)
-	{
-		if(!mAboutForm)
-		{
-			mAboutForm = gcnew AboutForm();
-		}
-		mAboutForm->ShowDialog();
 	}
 
 	void MainForm::InitComboBoxes()
@@ -232,20 +308,54 @@ namespace My05HydraReading
 	{
 		this->mTimer = gcnew System::Windows::Forms::Timer();
 		this->mTimer->Tick += gcnew System::EventHandler(this, &MainForm::OnTimerTick);
-		this->mTimer->Interval = 16;
+		this->mTimer->Interval = System::Convert::ToInt32(this->mUpdateInterval->Value);
 		this->mTimer->Enabled = true;
-
 		
 		//has to be called after the other comboboxes have been set up, otherwise it might try to change an uninitialized combobox.
 		this->mControllerChoice->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::SelectedControllerChanged);
 		this->SelectedControllerChanged(sender, e); //force update
 
-		if(!mControllerMappings[LEFT_CONTROLLER].Load(GetDefaultIniFilename(true), L"0") || !mControllerMappings[RIGHT_CONTROLLER].Load(GetDefaultIniFilename(false), L"1"))
+		if( !mControllerMappings[LEFT_CONTROLLER].Load(GetDefaultIniFilename(LEFT_CONTROLLER), L"0") ||
+			!mControllerMappings[RIGHT_CONTROLLER].Load(GetDefaultIniFilename(RIGHT_CONTROLLER), L"1") ||
+			!LoadOrigin(LEFT_CONTROLLER) ||
+			!LoadOrigin(RIGHT_CONTROLLER)
+		    )
 		{
 			Error("Could not load settings!");
 			return;
 		}
 		ApplySettings();
+
+		
+		//Initialize PPJoy Handles
+
+		static const char* DeviceNames[NUM_VIRTUAL_JOYSTICKS] =
+		{
+			"\\\\.\\PPJoyIOCTL1",
+			"\\\\.\\PPJoyIOCTL2",
+			"\\\\.\\PPJoyIOCTL3",
+			"\\\\.\\PPJoyIOCTL4"
+		};
+		for(unsigned int joyIndex = 0; joyIndex < NUM_VIRTUAL_JOYSTICKS; ++joyIndex)
+		{
+			/* Open a handle to the control device for the virtual joystick. */
+			mJoyHandles[joyIndex] = CreateFile(DeviceNames,GENERIC_WRITE,FILE_SHARE_WRITE,NULL,OPEN_EXISTING,0,NULL);
+			
+			/* Make sure we could open the device! */
+			if (mJoyHandles[joyIndex] == INVALID_HANDLE_VALUE)
+			{
+				std::stringstream ss;
+				ss << "Could not find virtual joystick " << joyIndex+1 <<" - Make sure you've set up Virtual Joystick 1 - 4 in PPJoy!";
+				this->Error(ss.str().c_str());
+				return;
+			}
+
+			/* Initialise the IOCTL data structure */
+			mJoyStates[joyIndex].Signature = JOYSTICK_STATE_V1;
+			mJoyStates[joyIndex].NumAnalog = NUM_ANALOG;
+			mJoyStates[joyIndex].NumDigital = NUM_DIGITAL;
+		}
+
 		this->mInitialized = true;
 	}
 
@@ -266,6 +376,8 @@ namespace My05HydraReading
 		this->mPositionGroup->Visible = !display;
 		this->mRotationGroup->Visible = !display;
 		this->mTriggerGroup->Visible = !display;
+		this->mUpdateIntervalLabel->Visible = !display;
+		this->mUpdateInterval->Visible = !display;
 
 		//base message
 		this->mLabelBase->Visible = display;
@@ -357,52 +469,6 @@ namespace My05HydraReading
 		return true;
 	}
 
-	System::Void MainForm::OnTimerTick(System::Object^  sender, System::EventArgs^  e)
-	{
-		//set correct base index
-		if(!this->SetBase())
-		{
-			return;
-		}
-		//set correct controller indices
-		if(!this->SetControllerIndices())
-		{
-			return;
-		}
-		
-		int controllerToQuery = mControllerIndices[this->mControllerChoice->SelectedIndex];
-		sixenseControllerData data;
-		if( sixenseGetNewestData(controllerToQuery, &data) != SIXENSE_SUCCESS )
-		{
-			this->Error("Could not poll data!");
-			return;
-		}
-
-		{
-			static int i = 0;
-			std::stringstream ss;
-			//ss<<++i;
-			//ss<<mControllerChoice->SelectedIndex;
-			//ss << data.pos[0];
-			float x = data.pos[0];
-			ss << " - " << x;
-			//this->mLabelXAxisValue->Text = gcnew String(ss.str().c_str());
-			//this->mTriggerGroup->Text = gcnew String(ss.str().c_str());
-		}
-		{
-			std::stringstream ss;
-			if(data.buttons & SIXENSE_BUTTON_1) ss << "1 ";
-			if(data.buttons & SIXENSE_BUTTON_2) ss << "2 ";
-			if(data.buttons & SIXENSE_BUTTON_3) ss << "3 ";
-			if(data.buttons & SIXENSE_BUTTON_4) ss << "4 ";
-			if(data.buttons & SIXENSE_BUTTON_START) ss << "Start ";
-			if(data.buttons & SIXENSE_BUTTON_BUMPER) ss << "Bumper ";
-			if(data.buttons & SIXENSE_BUTTON_JOYSTICK) ss << "Joystick ";
-			//this->mPressedButtonsLabel->Text = gcnew String(ss.str().c_str());
-		}
-		
-	}
-
 	System::Void MainForm::UpdateBindings(System::Object^  sender, System::EventArgs^  e)
 	{ 
 		//if this is called during initialization, it's because the initial values are set. We don't need to save those, in fact it'd probably cause bugs.
@@ -484,7 +550,7 @@ namespace My05HydraReading
 			mapping.TriggerButton.Set(mTriggerJoy->SelectedIndex, mTriggerButton->SelectedIndex);
 		}
 
-		if(!mapping.Save(GetDefaultIniFilename(this->mControllerChoice->SelectedIndex == LEFT_CONTROLLER)))
+		if(!mapping.Save(GetDefaultIniFilename(this->mControllerChoice->SelectedIndex)))
 		{
 			Error("Could not save settings!");
 			return;
@@ -671,4 +737,169 @@ namespace My05HydraReading
 			LoadSettings(ToWideString(openFileDialog1->FileName));
 		}
 	}
+
+	const bool MainForm::LoadOrigin(int side)
+	{
+		return IniReadVec3f(L"origin", GetDefaultIniFilename(side).c_str(), mOrigins[side]);
+	}
+	
+	const bool MainForm::SaveOrigin(int side)
+	{
+		return IniWriteVec3f(L"origin", mOrigins[side], GetDefaultIniFilename(side).c_str());
+	}
+
+	System::Void MainForm::OnAboutClicked(System::Object^  sender, System::EventArgs^  e)
+	{
+		//if(!mAboutForm)
+		//{
+			AboutForm^ mAboutForm = gcnew AboutForm();
+		//}
+		mAboutForm->ShowDialog();
+	}
+
+	System::Void MainForm::OnSetOriginClicked(System::Object^  sender, System::EventArgs^  e)
+	{
+		mSetOriginForm = gcnew SetOriginForm();
+		mSetOriginForm->FormClosed += gcnew System::Windows::Forms::FormClosedEventHandler(this, &MainForm::OnSetOriginClosed);
+		mSetOriginForm->ShowDialog();
+	}
+
+	System::Void MainForm::OnSetOriginClosed(System::Object^  sender, System::Windows::Forms::FormClosedEventArgs^  e)
+	{
+		mSetOriginForm = nullptr;
+	}
+
+	namespace
+	{
+		SetDigital(JoystickState joyStates[], ButtonMapping& bm, bool pressed)
+		{
+			if(bm.Joy == -1) return;
+			joyStates[bm.Joy].Digital[bm.Button] = pressed;
+		}
+
+		Clamp(float min, float& val, float max)
+		{
+			if(val < min) val = min;
+			if(val > max) val = max;
+		}
+
+		//works for position & rotation
+		SetAnalogPosRot(JoystickState joyStates[], AxisMapping& am, float position)
+		{
+			if(am.Joy == -1) return;
+			Clamp(-am.Range, position, am.Range);
+			if(am.Inverted) position = -position;
+			joyStates[am.Joy].Analog[am.Axis] = (PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 + (PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 * (position/am.Range);
+		}
+	}
+
+	System::Void MainForm::OnTimerTick(System::Object^  sender, System::EventArgs^  e)
+	{
+		//set correct base index
+		if(!this->SetBase())
+		{
+			return;
+		}
+		//set correct controller indices
+		if(!this->SetControllerIndices())
+		{
+			return;
+		}
+		
+		int controllerToQuery = this->mControllerIndices[this->mControllerChoice->SelectedIndex];
+		float* origin = this->mOrigins[this->mControllerChoice->SelectedIndex];
+		ControllerMapping& mapping = this->mControllerMappings[this->mControllerChoice->SelectedIndex];
+
+		sixenseControllerData data;
+		if( sixenseGetNewestData(controllerToQuery, &data) != SIXENSE_SUCCESS )
+		{
+			this->Error("Could not poll data!");
+			return;
+		}
+
+		if(mSetOriginForm) //Set Origin Window currently open?
+		{
+			//any key pressed?
+			if(data.buttons & (SIXENSE_BUTTON_1 | SIXENSE_BUTTON_2 | SIXENSE_BUTTON_3 | SIXENSE_BUTTON_4 | SIXENSE_BUTTON_START | SIXENSE_BUTTON_BUMPER | SIXENSE_BUTTON_JOYSTICK) )
+			{
+				//apply origin on any key press
+				SaveOrigin(this->mControllerChoice->SelectedIndex);
+				for(int dim = 0; dim < 3; ++dim)
+				{
+					origin[dim] = data.pos[dim];
+				}
+				//And save it.
+				//Also close the form, obviously.
+				mSetOriginForm->Close();
+			}
+			//that's it.
+			return;
+		}
+				
+		//input sending time!
+
+		//clearing the joy states in case the mapping was changed and there's still old values in there
+		for(unsigned int joyIndex = 0; joyIndex < NUM_VIRTUAL_JOYSTICKS; ++joyIndex)
+		{
+			for(unsigned int analogIndex = 0; analogIndex < NUM_ANALOG; ++analogIndex)
+			{
+				mJoyStates[joyIndex].Analog[analogIndex] = (PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2;
+			}
+			for(unsigned int digitalIndex = 0; digitalIndex < NUM_DIGITAL; ++digitalIndex)
+			{
+				mJoyStates[joyIndex].Digital[digitalIndex] = 0;
+			}
+		}
+
+		//filling the joy states
+		
+		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton1], data.buttons & SIXENSE_BUTTON_1);
+		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton2], data.buttons & SIXENSE_BUTTON_2);
+		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton3], data.buttons & SIXENSE_BUTTON_3);
+		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton4], data.buttons & SIXENSE_BUTTON_4);
+		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonStart], data.buttons & SIXENSE_BUTTON_START);
+		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonJoystick], data.buttons & SIXENSE_BUTTON_JOYSTICK);
+		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonBumper], data.buttons & SIXENSE_BUTTON_BUMPER);
+
+		SetAnalogPosRot(mJoyStates, mapping.Position[0], data.pos[0]-origin[0]);
+		SetAnalogPosRot(mJoyStates, mapping.Position[1], data.pos[1]-origin[1]);
+		SetAnalogPosRot(mJoyStates, mapping.Position[1], data.pos[2]-origin[2]);
+
+		//thanks, http://www.paulbourke.net/geometry/eulerangle/
+		//still I'm not quite sure if this is correct...
+		
+		
+		float pitch = asin(data.rot_mat[2][1]);
+		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::ePitch], pitch * 180.0f / M_PI);
+
+		float yaw = atan2(data.rot_mat[0][1], data.rot_mat[1][1]);
+		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eYaw], yaw * 180.0f / M_PI);
+
+		float roll = atan2(-data.rot_mat[2][0], data.rot_mat[2][2]);
+		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eRoll], roll * 180.0f / M_PI);
+
+
+
+		//send it to the joystick
+		for(unsigned int joyIndex = 0; joyIndex < NUM_VIRTUAL_JOYSTICKS; ++joyIndex)
+		{
+			DWORD retSize;
+			if (!DeviceIoControl(mJoyHandles[joyIndex],IOCTL_PPORTJOY_SET_STATE,mJoyStates+joyIndex,sizeof(JoystickState),NULL,0,&retSize,NULL))
+			{
+				rc= GetLastError();
+				if (rc==2)
+				{
+					std::stringstream ss;
+					ss << "Virtual joystick " << joyIndex+1 << " removed. Exiting.";
+					this->Error(ss.str().c_str());
+					return;
+				}
+				std::stringstream ss;
+				ss << "Error " << rc << " updating virtual joystick " << joyIndex+1;
+				this->Error(ss.str().c_str());
+				return;
+			}
+		}
+	}
+
 }

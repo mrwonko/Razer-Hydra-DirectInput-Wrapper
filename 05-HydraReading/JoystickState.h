@@ -20,9 +20,20 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 ===========================================================================
 */
 
-// stdafx.h : Includedatei für Standardsystem-Includedateien
-// oder häufig verwendete projektspezifische Includedateien,
-// die nur in unregelmäßigen Abständen geändert werden.
 #pragma once
 
-// TODO: Hier auf zusätzliche Header, die das Programm erfordert, verweisen.
+#define	NUM_ANALOG	16		/* Number of analog values which we will provide */
+#define	NUM_DIGITAL	16		/* Number of digital values which we will provide */
+
+#pragma pack(push,1)		/* All fields in structure must be byte aligned. */
+
+struct JoystickState
+{
+	unsigned long	Signature;				/* Signature to identify packet to PPJoy IOCTL */
+	char			NumAnalog;				/* Num of analog values we pass */
+	long			Analog[NUM_ANALOG];		/* Analog values */
+	char			NumDigital;				/* Num of digital values we pass */
+	char			Digital[NUM_DIGITAL];	/* Digital values */
+};
+
+#pragma pack(pop)

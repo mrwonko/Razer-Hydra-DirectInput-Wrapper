@@ -921,7 +921,7 @@ namespace My05HydraReading
 		//Analog Stick Y
 		
 		{
-			float position = float(data.joystick_y - 127)/128;
+			float position = -float(data.joystick_y - 127)/128; //reportedly flipped
 			if(mapping.JoystickYIsAxis)
 			{
 				SetAnalogOther(mJoyStates, mapping.JoystickYAxis, (mapping.JoystickYAxis.Inverted ? - position : position));

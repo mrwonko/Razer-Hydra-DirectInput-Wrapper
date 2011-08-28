@@ -27,8 +27,10 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <vector>
 #include <cassert>
 #include <sixense.h>
+#include <Windows.h>
 
 struct ControllerMapping;
+struct JoystickState;
 
 namespace My05HydraReading
 {
@@ -42,7 +44,6 @@ namespace My05HydraReading
 
 	ref class MainForm; //designer displays first class in header -.-
 	ref class SetOriginForm;
-	ref struct JoystickState;
 
 	/// <summary>
 	/// Zusammenfassung für MainForm

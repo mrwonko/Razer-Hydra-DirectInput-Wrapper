@@ -21,6 +21,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "stdafx.h"
+#define _USE_MATH_DEFINES //or M_PI doesn't get defined
 #include "MainForm.h"
 #include <Windows.h>
 #include <sstream>
@@ -329,17 +330,17 @@ namespace My05HydraReading
 		
 		//Initialize PPJoy Handles
 
-		static const char* DeviceNames[NUM_VIRTUAL_JOYSTICKS] =
+		static const wchar_t* DeviceNames[NUM_VIRTUAL_JOYSTICKS] =
 		{
-			"\\\\.\\PPJoyIOCTL1",
-			"\\\\.\\PPJoyIOCTL2",
-			"\\\\.\\PPJoyIOCTL3",
-			"\\\\.\\PPJoyIOCTL4"
+			L"\\\\.\\PPJoyIOCTL1",
+			L"\\\\.\\PPJoyIOCTL2",
+			L"\\\\.\\PPJoyIOCTL3",
+			L"\\\\.\\PPJoyIOCTL4"
 		};
 		for(unsigned int joyIndex = 0; joyIndex < NUM_VIRTUAL_JOYSTICKS; ++joyIndex)
 		{
 			/* Open a handle to the control device for the virtual joystick. */
-			mJoyHandles[joyIndex] = CreateFile(DeviceNames,GENERIC_WRITE,FILE_SHARE_WRITE,NULL,OPEN_EXISTING,0,NULL);
+			mJoyHandles[joyIndex] = CreateFile(DeviceNames[joyIndex],GENERIC_WRITE,FILE_SHARE_WRITE,NULL,OPEN_EXISTING,0,NULL);
 			
 			/* Make sure we could open the device! */
 			if (mJoyHandles[joyIndex] == INVALID_HANDLE_VALUE)
@@ -771,25 +772,31 @@ namespace My05HydraReading
 
 	namespace
 	{
-		SetDigital(JoystickState joyStates[], ButtonMapping& bm, bool pressed)
+		void SetDigital(JoystickState joyStates[], ButtonMapping& bm, bool pressed)
 		{
 			if(bm.Joy == -1) return;
 			joyStates[bm.Joy].Digital[bm.Button] = pressed;
 		}
 
-		Clamp(float min, float& val, float max)
+		void Clamp(float min, float& val, float max)
 		{
 			if(val < min) val = min;
 			if(val > max) val = max;
 		}
 
 		//works for position & rotation
-		SetAnalogPosRot(JoystickState joyStates[], AxisMapping& am, float position)
+		void SetAnalogPosRot(JoystickState joyStates[], AxisMapping& am, float position)
 		{
 			if(am.Joy == -1) return;
-			Clamp(-am.Range, position, am.Range);
+			Clamp(-float(am.Range), position, float(am.Range));
 			if(am.Inverted) position = -position;
-			joyStates[am.Joy].Analog[am.Axis] = (PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 + (PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 * (position/am.Range);
+			joyStates[am.Joy].Analog[am.Axis] = (PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 + long(float(PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 * (position/am.Range));
+		}
+
+		void SetAnalogOther(JoystickState joyStates[], AxisMapping& am, float position)
+		{
+			if(am.Joy == -1) return;
+			joyStates[am.Joy].Analog[am.Axis] = (PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 + long(float(PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 * position);
 		}
 	}
 
@@ -853,32 +860,77 @@ namespace My05HydraReading
 
 		//filling the joy states
 		
-		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton1], data.buttons & SIXENSE_BUTTON_1);
-		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton2], data.buttons & SIXENSE_BUTTON_2);
-		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton3], data.buttons & SIXENSE_BUTTON_3);
-		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton4], data.buttons & SIXENSE_BUTTON_4);
-		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonStart], data.buttons & SIXENSE_BUTTON_START);
-		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonJoystick], data.buttons & SIXENSE_BUTTON_JOYSTICK);
-		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonBumper], data.buttons & SIXENSE_BUTTON_BUMPER);
+		//Buttons
+		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton1], (data.buttons & SIXENSE_BUTTON_1) != 0);
+		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton2], (data.buttons & SIXENSE_BUTTON_2) != 0);
+		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton3], (data.buttons & SIXENSE_BUTTON_3) != 0);
+		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton4], (data.buttons & SIXENSE_BUTTON_4) != 0);
+		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonStart], (data.buttons & SIXENSE_BUTTON_START) != 0);
+		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonJoystick], (data.buttons & SIXENSE_BUTTON_JOYSTICK) != 0);
+		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonBumper], (data.buttons & SIXENSE_BUTTON_BUMPER) != 0);
 
+		//Position
 		SetAnalogPosRot(mJoyStates, mapping.Position[0], data.pos[0]-origin[0]);
 		SetAnalogPosRot(mJoyStates, mapping.Position[1], data.pos[1]-origin[1]);
 		SetAnalogPosRot(mJoyStates, mapping.Position[1], data.pos[2]-origin[2]);
 
+		//Rotation
+
 		//thanks, http://www.paulbourke.net/geometry/eulerangle/
-		//still I'm not quite sure if this is correct...
-		
+		//still I'm not quite sure if this is correct... needs verifying.
 		
 		float pitch = asin(data.rot_mat[2][1]);
-		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::ePitch], pitch * 180.0f / M_PI);
+		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::ePitch], pitch * float(180.0 / M_PI));
 
 		float yaw = atan2(data.rot_mat[0][1], data.rot_mat[1][1]);
-		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eYaw], yaw * 180.0f / M_PI);
+		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eYaw], yaw * float(180.0 / M_PI));
 
 		float roll = atan2(-data.rot_mat[2][0], data.rot_mat[2][2]);
-		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eRoll], roll * 180.0f / M_PI);
+		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eRoll], roll * float(180.0 / M_PI));
 
+		//Trigger
 
+		if(mapping.TriggerIsAxis)
+		{
+			SetAnalogOther(mJoyStates, mapping.TriggerAxis, float(data.trigger)/255);
+		}
+		else
+		{
+			if(mapping.TriggerButton.Joy != -1)
+			{
+				mJoyStates[mapping.TriggerButton.Joy].Digital[mapping.TriggerButton.Button] = (data.trigger > 127 ? 1 : 0);
+			}
+		}
+
+		//Analog Stick X
+		
+		{
+			float position = float(data.joystick_x - 127)/128;
+			if(mapping.JoystickXIsAxis)
+			{
+				SetAnalogOther(mJoyStates, mapping.JoystickXAxis, (mapping.JoystickXAxis.Inverted ? - position : position));
+			}
+			else
+			{
+				SetDigital(mJoyStates, mapping.JoystickXButtons.Min, position < -0.5f);
+				SetDigital(mJoyStates, mapping.JoystickXButtons.Max, position > 0.5f);
+			}
+		}
+
+		//Analog Stick Y
+		
+		{
+			float position = float(data.joystick_y - 127)/128;
+			if(mapping.JoystickYIsAxis)
+			{
+				SetAnalogOther(mJoyStates, mapping.JoystickYAxis, (mapping.JoystickYAxis.Inverted ? - position : position));
+			}
+			else
+			{
+				SetDigital(mJoyStates, mapping.JoystickYButtons.Min, position < -0.5f);
+				SetDigital(mJoyStates, mapping.JoystickYButtons.Max, position > 0.5f);
+			}
+		}
 
 		//send it to the joystick
 		for(unsigned int joyIndex = 0; joyIndex < NUM_VIRTUAL_JOYSTICKS; ++joyIndex)
@@ -886,7 +938,7 @@ namespace My05HydraReading
 			DWORD retSize;
 			if (!DeviceIoControl(mJoyHandles[joyIndex],IOCTL_PPORTJOY_SET_STATE,mJoyStates+joyIndex,sizeof(JoystickState),NULL,0,&retSize,NULL))
 			{
-				rc= GetLastError();
+				DWORD rc = GetLastError();
 				if (rc==2)
 				{
 					std::stringstream ss;

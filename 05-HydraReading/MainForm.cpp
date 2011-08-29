@@ -778,25 +778,27 @@ namespace My05HydraReading
 			joyStates[bm.Joy].Digital[bm.Button] = pressed;
 		}
 
-		void Clamp(float min, float& val, float max)
+		template<typename T> void Clamp(T min, T& val, T max)
 		{
 			if(val < min) val = min;
 			if(val > max) val = max;
 		}
 
-		//works for position & rotation
+		//for position & rotation we take range & inverted into account.
 		void SetAnalogPosRot(JoystickState joyStates[], AxisMapping& am, float position)
 		{
 			if(am.Joy == -1) return;
 			Clamp(-float(am.Range), position, float(am.Range));
 			if(am.Inverted) position = -position;
-			joyStates[am.Joy].Analog[am.Axis] = (PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 + long(float(PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 * (position/am.Range));
+			joyStates[am.Joy].Analog[am.Axis] += long(float(PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 * (position/am.Range));
+			Clamp(long(PPJOY_AXIS_MIN), joyStates[am.Joy].Analog[am.Axis], long(PPJOY_AXIS_MAX));
 		}
 
 		void SetAnalogOther(JoystickState joyStates[], AxisMapping& am, float position)
 		{
 			if(am.Joy == -1) return;
-			joyStates[am.Joy].Analog[am.Axis] = (PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 + long(float(PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 * position);
+			joyStates[am.Joy].Analog[am.Axis] += long(float(PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 * position);
+			Clamp(long(PPJOY_AXIS_MIN), joyStates[am.Joy].Analog[am.Axis], long(PPJOY_AXIS_MAX));
 		}
 	}
 
@@ -812,29 +814,25 @@ namespace My05HydraReading
 		{
 			return;
 		}
-		
-		int controllerToQuery = this->mControllerIndices[this->mControllerChoice->SelectedIndex];
-		float* origin = this->mOrigins[this->mControllerChoice->SelectedIndex];
-		ControllerMapping& mapping = this->mControllerMappings[this->mControllerChoice->SelectedIndex];
-
-		sixenseControllerData data;
-		if( sixenseGetNewestData(controllerToQuery, &data) != SIXENSE_SUCCESS )
-		{
-			this->Error("Could not poll data!");
-			return;
-		}
 
 		if(mSetOriginForm) //Set Origin Window currently open?
 		{
+			int controllerToQuery = this->mControllerIndices[this->mControllerChoice->SelectedIndex];
+			sixenseControllerData data;
+			if( sixenseGetNewestData(controllerToQuery, &data) != SIXENSE_SUCCESS )
+			{
+				this->Error("Could not poll data!");
+				return;
+			}
 			//any key pressed?
 			if(data.buttons & (SIXENSE_BUTTON_1 | SIXENSE_BUTTON_2 | SIXENSE_BUTTON_3 | SIXENSE_BUTTON_4 | SIXENSE_BUTTON_START | SIXENSE_BUTTON_BUMPER | SIXENSE_BUTTON_JOYSTICK) )
 			{
 				//apply origin on any key press
-				SaveOrigin(this->mControllerChoice->SelectedIndex);
 				for(int dim = 0; dim < 3; ++dim)
 				{
-					origin[dim] = data.pos[dim];
+					mOrigins[this->mControllerChoice->SelectedIndex][dim] = data.pos[dim];
 				}
+				SaveOrigin(this->mControllerChoice->SelectedIndex);
 				//And save it.
 				//Also close the form, obviously.
 				mSetOriginForm->Close();
@@ -842,8 +840,6 @@ namespace My05HydraReading
 			//that's it.
 			return;
 		}
-				
-		//input sending time!
 
 		//clearing the joy states in case the mapping was changed and there's still old values in there
 		for(unsigned int joyIndex = 0; joyIndex < NUM_VIRTUAL_JOYSTICKS; ++joyIndex)
@@ -858,99 +854,116 @@ namespace My05HydraReading
 			}
 		}
 
-		//filling the joy states
-		
-		//Buttons
-		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton1], (data.buttons & SIXENSE_BUTTON_1) != 0);
-		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton2], (data.buttons & SIXENSE_BUTTON_2) != 0);
-		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton3], (data.buttons & SIXENSE_BUTTON_3) != 0);
-		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton4], (data.buttons & SIXENSE_BUTTON_4) != 0);
-		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonStart], (data.buttons & SIXENSE_BUTTON_START) != 0);
-		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonJoystick], (data.buttons & SIXENSE_BUTTON_JOYSTICK) != 0);
-		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonBumper], (data.buttons & SIXENSE_BUTTON_BUMPER) != 0);
-
-		//Position
-		SetAnalogPosRot(mJoyStates, mapping.Position[0], data.pos[0]-origin[0]);
-		SetAnalogPosRot(mJoyStates, mapping.Position[1], data.pos[1]-origin[1]);
-		SetAnalogPosRot(mJoyStates, mapping.Position[2], data.pos[2]-origin[2]);
-
-		//Rotation
-
-		//thanks, http://www.paulbourke.net/geometry/eulerangle/
-		//still I'm not quite sure if this is correct... needs verifying.
-		//okay, thanks to Opadong it's now verified.
-		
-		float pitch = asin(data.rot_mat[2][1]);
-		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::ePitch], pitch * float(180.0 / M_PI));
-
-		float yaw = atan2(-data.rot_mat[2][0], data.rot_mat[2][2]);
-		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eYaw], yaw * float(180.0 / M_PI));
-
-		float roll = atan2(data.rot_mat[0][1], data.rot_mat[1][1]);
-		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eRoll], roll * float(180.0 / M_PI));
-
-		//Trigger
-
-		if(mapping.TriggerIsAxis)
+		//this needs to be done for every controller - of course.
+		for(unsigned int controllerIndex = 0; controllerIndex < 2; ++controllerIndex)
 		{
-			SetAnalogOther(mJoyStates, mapping.TriggerAxis, float(data.trigger)/255);
-		}
-		else
-		{
-			if(mapping.TriggerButton.Joy != -1)
+			int controllerToQuery = this->mControllerIndices[controllerIndex];
+			float* origin = this->mOrigins[controllerIndex];
+			ControllerMapping& mapping = this->mControllerMappings[controllerIndex];
+
+			sixenseControllerData data;
+			if( sixenseGetNewestData(controllerToQuery, &data) != SIXENSE_SUCCESS )
 			{
-				mJoyStates[mapping.TriggerButton.Joy].Digital[mapping.TriggerButton.Button] = (data.trigger > 127 ? 1 : 0);
+				this->Error("Could not poll data!");
+				return;
 			}
-		}
+				
+			//input sending time!
 
-		//Analog Stick X
+			//filling the joy states
 		
-		{
-			float position = float(data.joystick_x - 127)/128;
-			if(mapping.JoystickXIsAxis)
+			//Buttons
+			SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton1], (data.buttons & SIXENSE_BUTTON_1) != 0);
+			SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton2], (data.buttons & SIXENSE_BUTTON_2) != 0);
+			SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton3], (data.buttons & SIXENSE_BUTTON_3) != 0);
+			SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton4], (data.buttons & SIXENSE_BUTTON_4) != 0);
+			SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonStart], (data.buttons & SIXENSE_BUTTON_START) != 0);
+			SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonJoystick], (data.buttons & SIXENSE_BUTTON_JOYSTICK) != 0);
+			SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonBumper], (data.buttons & SIXENSE_BUTTON_BUMPER) != 0);
+
+			//Position
+			SetAnalogPosRot(mJoyStates, mapping.Position[0], data.pos[0]-origin[0]);
+			SetAnalogPosRot(mJoyStates, mapping.Position[1], data.pos[1]-origin[1]);
+			SetAnalogPosRot(mJoyStates, mapping.Position[2], data.pos[2]-origin[2]);
+
+			//Rotation
+
+			//thanks, http://www.paulbourke.net/geometry/eulerangle/
+			//still I'm not quite sure if this is correct... needs verifying.
+			//okay, thanks to Opadong it's now verified.
+		
+			float pitch = asin(data.rot_mat[2][1]);
+			SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::ePitch], pitch * float(180.0 / M_PI));
+
+			float yaw = atan2(-data.rot_mat[2][0], data.rot_mat[2][2]);
+			SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eYaw], yaw * float(180.0 / M_PI));
+
+			float roll = atan2(data.rot_mat[0][1], data.rot_mat[1][1]);
+			SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eRoll], roll * float(180.0 / M_PI));
+
+			//Trigger
+
+			if(mapping.TriggerIsAxis)
 			{
-				SetAnalogOther(mJoyStates, mapping.JoystickXAxis, (mapping.JoystickXAxis.Inverted ? - position : position));
+				SetAnalogOther(mJoyStates, mapping.TriggerAxis, float(data.trigger)/255);
 			}
 			else
 			{
-				SetDigital(mJoyStates, mapping.JoystickXButtons.Min, position < -0.5f);
-				SetDigital(mJoyStates, mapping.JoystickXButtons.Max, position > 0.5f);
-			}
-		}
-
-		//Analog Stick Y
-		
-		{
-			float position = -float(data.joystick_y - 127)/128; //reportedly flipped
-			if(mapping.JoystickYIsAxis)
-			{
-				SetAnalogOther(mJoyStates, mapping.JoystickYAxis, (mapping.JoystickYAxis.Inverted ? - position : position));
-			}
-			else
-			{
-				SetDigital(mJoyStates, mapping.JoystickYButtons.Min, position < -0.5f);
-				SetDigital(mJoyStates, mapping.JoystickYButtons.Max, position > 0.5f);
-			}
-		}
-
-		//send it to the joystick
-		for(unsigned int joyIndex = 0; joyIndex < NUM_VIRTUAL_JOYSTICKS; ++joyIndex)
-		{
-			DWORD retSize;
-			if (!DeviceIoControl(mJoyHandles[joyIndex],IOCTL_PPORTJOY_SET_STATE,mJoyStates+joyIndex,sizeof(JoystickState),NULL,0,&retSize,NULL))
-			{
-				DWORD rc = GetLastError();
-				if (rc==2)
+				if(mapping.TriggerButton.Joy != -1)
 				{
+					mJoyStates[mapping.TriggerButton.Joy].Digital[mapping.TriggerButton.Button] = (data.trigger > 127 ? 1 : 0);
+				}
+			}
+
+			//Analog Stick X
+		
+			{
+				float position = float(data.joystick_x - 127)/128;
+				if(mapping.JoystickXIsAxis)
+				{
+					SetAnalogOther(mJoyStates, mapping.JoystickXAxis, (mapping.JoystickXAxis.Inverted ? - position : position));
+				}
+				else
+				{
+					SetDigital(mJoyStates, mapping.JoystickXButtons.Min, position < -0.5f);
+					SetDigital(mJoyStates, mapping.JoystickXButtons.Max, position > 0.5f);
+				}
+			}
+
+			//Analog Stick Y
+		
+			{
+				float position = -float(data.joystick_y - 127)/128; //reportedly flipped
+				if(mapping.JoystickYIsAxis)
+				{
+					SetAnalogOther(mJoyStates, mapping.JoystickYAxis, (mapping.JoystickYAxis.Inverted ? - position : position));
+				}
+				else
+				{
+					SetDigital(mJoyStates, mapping.JoystickYButtons.Min, position < -0.5f);
+					SetDigital(mJoyStates, mapping.JoystickYButtons.Max, position > 0.5f);
+				}
+			}
+
+			//send it to the joystick
+			for(unsigned int joyIndex = 0; joyIndex < NUM_VIRTUAL_JOYSTICKS; ++joyIndex)
+			{
+				DWORD retSize;
+				if (!DeviceIoControl(mJoyHandles[joyIndex],IOCTL_PPORTJOY_SET_STATE,mJoyStates+joyIndex,sizeof(JoystickState),NULL,0,&retSize,NULL))
+				{
+					DWORD rc = GetLastError();
+					if (rc==2)
+					{
+						std::stringstream ss;
+						ss << "Virtual joystick " << joyIndex+1 << " removed. Exiting.";
+						this->Error(ss.str().c_str());
+						return;
+					}
 					std::stringstream ss;
-					ss << "Virtual joystick " << joyIndex+1 << " removed. Exiting.";
+					ss << "Error " << rc << " updating virtual joystick " << joyIndex+1;
 					this->Error(ss.str().c_str());
 					return;
 				}
-				std::stringstream ss;
-				ss << "Error " << rc << " updating virtual joystick " << joyIndex+1;
-				this->Error(ss.str().c_str());
-				return;
 			}
 		}
 	}

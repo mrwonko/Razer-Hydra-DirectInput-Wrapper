@@ -544,7 +544,7 @@ namespace My05HydraReading
 		mapping.TriggerIsAxis = mTriggerTypeAxis->Checked;
 		if(mapping.TriggerIsAxis)
 		{
-			mapping.TriggerAxis.Set(mTriggerJoy->SelectedIndex, mTriggerAxis->SelectedIndex);
+			mapping.TriggerAxis.Set(mTriggerJoy->SelectedIndex, mTriggerAxis->SelectedIndex, 255, this->mTriggerAxisInvert->Checked);
 		}
 		else
 		{
@@ -581,6 +581,7 @@ namespace My05HydraReading
 		//trigger 
 		this->mTriggerAxis->Enabled = this->mTriggerTypeAxis->Checked;
 		this->mTriggerButton->Enabled = !this->mTriggerTypeAxis->Checked;
+		this->mTriggerAxisInvert->Enabled = this->mTriggerTypeAxis->Checked;
 		//grey out unavailable analog stick x settings
 		this->mJoystickXAxisJoy->Enabled         =  this->mJoystickXTypeAxis->Checked;
 		this->mJoystickXAxisAxis->Enabled        =  this->mJoystickXTypeAxis->Checked;
@@ -698,6 +699,7 @@ namespace My05HydraReading
 		{
 			mTriggerJoy->SelectedIndex = mapping.TriggerAxis.Joy + 1;
 			mTriggerAxis->SelectedIndex = mapping.TriggerAxis.Axis;
+			mTriggerAxisInvert->Checked = mapping.TriggerAxis.Inverted;
 		}
 		else
 		{
@@ -905,7 +907,7 @@ namespace My05HydraReading
 
 			if(mapping.TriggerIsAxis)
 			{
-				SetAnalogOther(mJoyStates, mapping.TriggerAxis, float(data.trigger)/255);
+				SetAnalogPosRot(mJoyStates, mapping.TriggerAxis, float(data.trigger));
 			}
 			else
 			{

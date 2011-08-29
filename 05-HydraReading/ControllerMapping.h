@@ -48,7 +48,6 @@ struct AxisMapping
 	int Joy; //0-3
 	int Axis; //0-15
 	int Range; //how far off the center is maximum?
-	int Center; //at which value is this centered?
 	bool Inverted;
 
 	void Set(int joy, int axis, int range = -1, bool inverted = false)

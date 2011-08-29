@@ -172,6 +172,7 @@ namespace My05HydraReading
 		System::Windows::Forms::GroupBox^  mRotationGroup;
 private: System::Windows::Forms::NumericUpDown^  mUpdateInterval;
 private: System::Windows::Forms::Label^  mUpdateIntervalLabel;
+private: System::Windows::Forms::CheckBox^  mTriggerAxisInvert;
 
 		 System::Windows::Forms::GroupBox^  mTriggerGroup;
 		
@@ -299,6 +300,7 @@ private: System::Windows::Forms::Label^  mUpdateIntervalLabel;
 			this->mTriggerTypeAxis = (gcnew System::Windows::Forms::RadioButton());
 			this->mTriggerAxis = (gcnew System::Windows::Forms::ComboBox());
 			this->mTriggerJoy = (gcnew System::Windows::Forms::ComboBox());
+			this->mTriggerAxisInvert = (gcnew System::Windows::Forms::CheckBox());
 			mSaveButton = (gcnew System::Windows::Forms::Button());
 			mLoadButton = (gcnew System::Windows::Forms::Button());
 			mOriginButton = (gcnew System::Windows::Forms::Button());
@@ -1293,6 +1295,7 @@ private: System::Windows::Forms::Label^  mUpdateIntervalLabel;
 			this->mRotationGroup->TabIndex = 52;
 			this->mRotationGroup->TabStop = false;
 			this->mRotationGroup->Text = L"Rotation";
+			this->mTriggerGroup->Controls->Add(this->mTriggerAxisInvert);
 			this->mTriggerGroup->Controls->Add(this->mTriggerTypeAxis);
 			this->mTriggerGroup->Controls->Add(pictureBox8);
 			this->mTriggerGroup->Controls->Add(this->mTriggerAxis);
@@ -1329,6 +1332,14 @@ private: System::Windows::Forms::Label^  mUpdateIntervalLabel;
 			this->mTriggerJoy->Size = System::Drawing::Size(50, 21);
 			this->mTriggerJoy->TabIndex = 21;
 			this->mTriggerJoy->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
+			this->mTriggerAxisInvert->AutoSize = true;
+			this->mTriggerAxisInvert->Location = System::Drawing::Point(202, 19);
+			this->mTriggerAxisInvert->Name = L"mTriggerAxisInvert";
+			this->mTriggerAxisInvert->Size = System::Drawing::Size(52, 17);
+			this->mTriggerAxisInvert->TabIndex = 48;
+			this->mTriggerAxisInvert->Text = L"invert";
+			this->mTriggerAxisInvert->UseVisualStyleBackColor = true;
+			this->mTriggerAxisInvert->CheckStateChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
 			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
 			this->ClientSize = System::Drawing::Size(595, 577);

@@ -164,6 +164,7 @@ const bool ControllerMapping::Save(const std::wstring& filename) const
 		if(!WriteInt(L"trigger", L"joystick", TriggerAxis.Joy,      filename_c)) return false;
 		if(!WriteInt(L"trigger", L"axis",     TriggerAxis.Axis,     filename_c)) return false;
 		if(!WriteBool(L"trigger",L"inverted", TriggerAxis.Inverted, filename_c)) return false;
+		if(!WriteBool(L"trigger",L"useFullAxis",TriggerUseFullAxis, filename_c)) return false;
 	}
 	else
 	{
@@ -271,6 +272,7 @@ const bool ControllerMapping::Load(const std::wstring& filename, const wchar_t* 
 		if(!ReadInt(L"trigger", L"joystick", joy,      filename_c, TriggerAxis.Joy,  -1, 3)) return false;
 		if(!ReadInt(L"trigger", L"axis",     L"7",     filename_c, TriggerAxis.Axis, 0, NUM_ANALOG-1)) return false;
 		if(!ReadBool(L"trigger",L"inverted", L"false", filename_c, TriggerAxis.Inverted)) return false;
+		if(!ReadBool(L"trigger",L"useFullAxis", L"false",filename_c,TriggerUseFullAxis)) return false;
 	}
 	else
 	{

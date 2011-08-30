@@ -108,6 +108,7 @@ struct ControllerMapping
 	AxisMapping Rotation[3];
 
 	bool TriggerIsAxis;
+	bool TriggerUseFullAxis;
 	union
 	{
 		AxisMapping TriggerAxis;

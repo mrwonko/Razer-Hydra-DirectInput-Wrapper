@@ -176,6 +176,9 @@ namespace My05HydraReading
 
 		//    Combo Box Initialization
 		this->InitComboBoxes();
+		
+		// For some reason visual studio won't generate this correctly.
+		this->mTriggerFullAxis->CheckedChanged += gcnew System::EventHandler(this, &MainForm::UpdateBindings);
 	}
 
 	MainForm::~MainForm()

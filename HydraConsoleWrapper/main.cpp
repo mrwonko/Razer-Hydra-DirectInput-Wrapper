@@ -54,7 +54,7 @@ struct sixenseAutoDeinit
 
 int main()
 {
-    std::cout<<"Razer Hydra Console DirectInput Wrapper 0.4d\n\n"
+    std::cout<<"Razer Hydra Console DirectInput Wrapper 0.4e\n\n"
     <<"Sends input to the virtual joysticks @ 60fps.\n"
     <<"Usually, the GUI program should satisfy your needs, but if it does not work for you, maybe this does.\n"<<std::endl;
     if(sixenseInit() != SIXENSE_SUCCESS)

@@ -4,7 +4,6 @@
 #include <sixense.h>
 #include <sstream>
 #include <vector>
-#include <cassert>
 #include "ControllerMapping.h"
 #include "PPJIoctl.h" //PP Joy IOCTL (i/o control?)
 #include <cmath>
@@ -41,7 +40,7 @@ namespace
 				IniReadFloat(category, L"y", L"0", filename, result[1]) &&
 				IniReadFloat(category, L"z", L"0", filename, result[2]);
 	}
-		
+
 	const bool IniWriteFloat(const wchar_t* category, const wchar_t* key, float value, const wchar_t* filename)
 	{
 		std::wstringstream wss;
@@ -69,7 +68,6 @@ JoystickManagement::JoystickManagement()
 	this->mControllerIndices[0] = -1;
 	this->mControllerIndices[1] = -1;
 }
-
 
 JoystickManagement::~JoystickManagement(void)
 {
@@ -151,14 +149,22 @@ const JoystickManagement::returnValue JoystickManagement::SetControllerIndices(s
 	//let's set up the variables
 	if(data[0].which_hand == 1) // 1 is left, 2 is right.
 	{
-		assert(data[1].which_hand == 2);
+		if(data[1].which_hand != 2)
+        {
+            message = "Internal logic error - second controller is not the right one.";
+            return eError;
+        }
 		mControllerIndices[LEFT_CONTROLLER]  = connectedControllers[0];
 		mControllerIndices[RIGHT_CONTROLLER] = connectedControllers[1];
 	}
 	else
 	{
-		assert(data[0].which_hand == 2);
-		assert(data[1].which_hand == 1);
+		if(data[0].which_hand != 2 ||
+		   data[1].which_hand != 1)
+        {
+            message = "Internal logic error during controller side determination.";
+            return eError;
+        }
 		mControllerIndices[LEFT_CONTROLLER]  = connectedControllers[1];
 		mControllerIndices[RIGHT_CONTROLLER] = connectedControllers[0];
 	}
@@ -181,7 +187,7 @@ const bool JoystickManagement::InitDevices(std::string& error)
 	{
 		/* Open a handle to the control device for the virtual joystick. */
 		mJoyHandles[joyIndex] = CreateFile(DeviceNames[joyIndex],GENERIC_WRITE,FILE_SHARE_WRITE,NULL,OPEN_EXISTING,0,NULL);
-			
+
 		/* Make sure we could open the device! */
 		if (mJoyHandles[joyIndex] == INVALID_HANDLE_VALUE)
 		{
@@ -203,7 +209,7 @@ const bool JoystickManagement::LoadOrigin(int side)
 {
 	return IniReadVec3f(L"origin", GetDefaultIniFilename(side).c_str(), mOrigins[side]);
 }
-	
+
 const bool JoystickManagement::SaveOrigin(int side)
 {
 	return IniWriteVec3f(L"origin", mOrigins[side], GetDefaultIniFilename(side).c_str());
@@ -269,11 +275,11 @@ const bool JoystickManagement::Update(std::string& error)
 			error = "Could not poll data!";
 			return false;
 		}
-				
+
 		//input sending time!
 
 		//filling the joy states
-		
+
 		//Buttons
 		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton1], (data.buttons & SIXENSE_BUTTON_1) != 0);
 		SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton2], (data.buttons & SIXENSE_BUTTON_2) != 0);
@@ -293,7 +299,7 @@ const bool JoystickManagement::Update(std::string& error)
 		//thanks, http://www.paulbourke.net/geometry/eulerangle/
 		//still I'm not quite sure if this is correct... needs verifying.
 		//okay, thanks to Opadong it's now verified.
-		
+
 		float pitch = asin(data.rot_mat[2][1]);
 		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::ePitch], pitch * float(180.0 / M_PI));
 
@@ -337,7 +343,7 @@ const bool JoystickManagement::Update(std::string& error)
 		}
 
 		//Analog Stick X
-		
+
 		{
 			float position = float(data.joystick_x - 127)/128;
 			if(mapping.JoystickXIsAxis)
@@ -352,7 +358,7 @@ const bool JoystickManagement::Update(std::string& error)
 		}
 
 		//Analog Stick Y
-		
+
 		{
 			float position = -float(data.joystick_y - 127)/128; //reportedly flipped
 			if(mapping.JoystickYIsAxis)

@@ -656,6 +656,11 @@ Hydra and the game not updating in sync.</value>
   <metadata name="mLabelBase.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>True</value>
   </metadata>
+  <data name="mTriggerFullAxis.ToolTip" xml:space="preserve">
+    <value>Usually, an axis is in the middle position and gets moved towards maximum/minimum.
+If you enable this option, the trigger axis instead starts at the minimum and goes to the
+maximum as you press the trigger.</value>
+  </data>
   <metadata name="$this.TrayHeight" type="System.Int32, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>213</value>
   </metadata>

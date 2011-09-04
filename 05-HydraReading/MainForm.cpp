@@ -21,16 +21,15 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
 #include "stdafx.h"
-#define _USE_MATH_DEFINES //or M_PI doesn't get defined
 #include "MainForm.h"
 #include <Windows.h>
 #include <sstream>
 #include "ControllerMapping.h"
 #include "AboutForm.h"
 #include "SetOriginForm.h"
-#include "PPJIoctl.h" //PP Joy IOCTL (i/o control?)
 #include "JoystickState.h"
-#include <cmath>
+#include "JoystickManagement.h"
+#include <sixense.h>
 
 #include <fstream>
 
@@ -38,18 +37,6 @@ namespace My05HydraReading
 {
 	namespace
 	{
-		std::wstring GetDefaultIniFilename(const bool left)
-		{
-			wchar_t dir[MAX_PATH];
-			GetCurrentDirectory(MAX_PATH, dir);
-			return std::wstring(dir) + (left ? L"/settingsLeft.ini" :  L"/settingsRight.ini");
-		}
-
-		std::wstring GetDefaultIniFilename(int side)
-		{
-			return GetDefaultIniFilename(side == MainForm::LEFT_CONTROLLER ? true : false);
-		}
-
 		// "Joy X" selection - width: 50
 		void InitJoystickComboBox(System::Windows::Forms::ComboBox^ box)
 		{
@@ -117,61 +104,14 @@ namespace My05HydraReading
 			Marshal::FreeHGlobal(IntPtr((void*)chars));
 			return os;
 		}
-
-		const bool IniReadFloat(const wchar_t* category, const wchar_t* key, const wchar_t* defaultvalue, const wchar_t* filename, float& result)
-		{
-			//GetPrivateProfileString() may truncate, but such long strings are most likely invalid anyway
-			wchar_t buffer[64];
-			if(!GetPrivateProfileString(category, key, defaultvalue, buffer, 64, filename)) return false;
-			std::wstringstream wss;
-			wss << buffer;
-			wss >> result;
-			return true;
-		}
-
-		const bool IniReadVec3f(const wchar_t* category, const wchar_t* filename, float* result)
-		{
-			return IniReadFloat(category, L"x", L"0", filename, result[0]) &&
-				   IniReadFloat(category, L"y", L"0", filename, result[1]) &&
-				   IniReadFloat(category, L"z", L"0", filename, result[2]);
-		}
-		
-		const bool IniWriteFloat(const wchar_t* category, const wchar_t* key, float value, const wchar_t* filename)
-		{
-			std::wstringstream wss;
-			wss<<value;
-			return WritePrivateProfileString(category, key, wss.str().c_str(), filename) == TRUE;
-		}
-
-		const bool IniWriteVec3f(const wchar_t* category, float* value, const wchar_t* filename)
-		{
-			return IniWriteFloat(category, L"x", value[0], filename) &&
-				   IniWriteFloat(category, L"y", value[1], filename) &&
-				   IniWriteFloat(category, L"z", value[2], filename);
-		}
 	}
 
 	MainForm::MainForm(void) :
 		mInitialized(false),
 		mIgnoreBindingChanges(true),
-		mControllerIndices(new int[2]),
-		mControllerMappings(new ControllerMapping[2]),
-		mOrigins(new float*[2]),
 		mSetOriginForm(nullptr),
-		mJoyHandles(new HANDLE[NUM_VIRTUAL_JOYSTICKS]),
-		mJoyStates(new JoystickState[NUM_VIRTUAL_JOYSTICKS])
+		mJoystickManagement(new JoystickManagement)
 	{
-		this->mOrigins[0] = new float[3];
-		this->mOrigins[1] = new float[3];
-		for(int cont = 0; cont < 2; ++cont)
-		{
-			for(int dim = 0; dim < 3; ++dim)
-			{
-				this->mOrigins[cont][dim] = 0.0f;
-			}
-		}
-		this->mControllerIndices[0] = -1;
-		this->mControllerIndices[1] = -1;
 		this->InitializeComponent();
 
 		//    Combo Box Initialization
@@ -192,22 +132,7 @@ namespace My05HydraReading
 		{
 			delete components;
 		}
-		if(this->mControllerIndices)
-		{
-			delete[] this->mControllerIndices;
-		}
-		if(this->mControllerMappings)
-		{
-			delete[] this->mControllerMappings;
-		}
-		if(this->mOrigins)
-		{
-			delete[] this->mOrigins[LEFT_CONTROLLER];
-			delete[] this->mOrigins[RIGHT_CONTROLLER];
-			delete[] this->mOrigins;
-		}
-		if(this->mJoyHandles) delete[] this->mJoyHandles;
-		if(this->mJoyStates) delete[] this->mJoyStates;
+		if(this->mJoystickManagement) delete this->mJoystickManagement;
 	}
 
 	//This doesn't work if I put it in the finalizer - seems that gets called at a time where stuff essential for the STL is not available anymore.
@@ -215,8 +140,8 @@ namespace My05HydraReading
 	{
 		if(this->mInitialized)
 		{
-			this->mControllerMappings[LEFT_CONTROLLER].Save(GetDefaultIniFilename(LEFT_CONTROLLER));
-			this->mControllerMappings[RIGHT_CONTROLLER].Save(GetDefaultIniFilename(RIGHT_CONTROLLER));
+			this->mJoystickManagement->mControllerMappings[JoystickManagement::LEFT_CONTROLLER ].Save(JoystickManagement::GetDefaultIniFilename(JoystickManagement::LEFT_CONTROLLER));
+			this->mJoystickManagement->mControllerMappings[JoystickManagement::RIGHT_CONTROLLER].Save(JoystickManagement::GetDefaultIniFilename(JoystickManagement::RIGHT_CONTROLLER));
 		}
 	}
 
@@ -319,45 +244,18 @@ namespace My05HydraReading
 		this->mControllerChoice->SelectedIndexChanged += gcnew System::EventHandler(this, &MainForm::SelectedControllerChanged);
 		this->SelectedControllerChanged(sender, e); //force update
 
-		if( !mControllerMappings[LEFT_CONTROLLER].Load(GetDefaultIniFilename(LEFT_CONTROLLER), L"0") ||
-			!mControllerMappings[RIGHT_CONTROLLER].Load(GetDefaultIniFilename(RIGHT_CONTROLLER), L"1") ||
-			!LoadOrigin(LEFT_CONTROLLER) ||
-			!LoadOrigin(RIGHT_CONTROLLER)
-		    )
+		if( !this->mJoystickManagement->InitialLoad())
 		{
 			Error("Could not load settings!");
 			return;
 		}
 		ApplySettings();
 
-		
-		//Initialize PPJoy Handles
-
-		static const wchar_t* DeviceNames[NUM_VIRTUAL_JOYSTICKS] =
+		std::string error;
+		if(!mJoystickManagement->InitDevices(error))
 		{
-			L"\\\\.\\PPJoyIOCTL1",
-			L"\\\\.\\PPJoyIOCTL2",
-			L"\\\\.\\PPJoyIOCTL3",
-			L"\\\\.\\PPJoyIOCTL4"
-		};
-		for(unsigned int joyIndex = 0; joyIndex < NUM_VIRTUAL_JOYSTICKS; ++joyIndex)
-		{
-			/* Open a handle to the control device for the virtual joystick. */
-			mJoyHandles[joyIndex] = CreateFile(DeviceNames[joyIndex],GENERIC_WRITE,FILE_SHARE_WRITE,NULL,OPEN_EXISTING,0,NULL);
-			
-			/* Make sure we could open the device! */
-			if (mJoyHandles[joyIndex] == INVALID_HANDLE_VALUE)
-			{
-				std::stringstream ss;
-				ss << "Could not find virtual joystick " << joyIndex+1 <<" - Make sure you've set up Virtual Joystick 1 - 4 in PPJoy!";
-				this->Error(ss.str().c_str());
-				return;
-			}
-
-			/* Initialise the IOCTL data structure */
-			mJoyStates[joyIndex].Signature = JOYSTICK_STATE_V1;
-			mJoyStates[joyIndex].NumAnalog = NUM_ANALOG;
-			mJoyStates[joyIndex].NumDigital = NUM_DIGITAL;
+			this->Error(error);
+			return;
 		}
 
 		this->mInitialized = true;
@@ -387,99 +285,13 @@ namespace My05HydraReading
 		this->mLabelBase->Visible = display;
 	}
 
-	const bool MainForm::SetBase()
-	{
-		for(int i = 0; i < sixenseGetMaxBases(); ++i)
-		{
-			if(sixenseIsBaseConnected(i))
-			{
-				sixenseSetActiveBase(i);
-				return true;
-			}
-		}
-#ifdef _DEBUG
-		// In debug mode I want it to work even without a Hydra - because I don't have one yet.
-		sixenseSetActiveBase(0);
-		return true;
-#endif
-		this->Error("Base disconnected!");
-		return false;
-	}
-
-	const bool MainForm::SetControllerIndices()
-	{
-		//which controllers are connected?
-		std::vector<int> connectedControllers;
-		for(int i = 0; i < sixenseGetMaxControllers(); ++i)
-		{
-			if(sixenseIsControllerEnabled(i))
-			{
-				connectedControllers.push_back(i);
-			}
-		}
-		//are there at least 2 controllers connected?
-		if(connectedControllers.size() < 2)
-		{
-#ifndef _DEBUG
-			this->Error("Not enough controllers connected! (2)");
-			return false;
-#else
-			//In debug mode, I'd like to be able to continue even if no controllers are connected.
-			mControllerIndices[0] = 0;
-			mControllerIndices[1] = 1;
-			return true;
-#endif
-		}
-		//poll controller information - it seems inefficient to do that multiple times though
-		sixenseControllerData data[2];
-		if( sixenseGetNewestData(connectedControllers[0], data) != SIXENSE_SUCCESS ||
-			sixenseGetNewestData(connectedControllers[1], data+1) != SIXENSE_SUCCESS )
-		{
-			this->Error("Could not poll data!");
-			return false;
-		}
-
-		// initialized?
-		if(data[0].which_hand == 0 || data[1].which_hand == 0)
-		{
-			this->mLabelBase->Text = "Please place the controllers in the base.";
-			DisplayBaseMessage(true);
-			return false;
-		}
-		// different hands?
-		if(data[0].which_hand == data[1].which_hand)
-		{
-			this->mLabelBase->Text = "Please place the controllers in different base docks.";
-			DisplayBaseMessage(true);
-			return false;
-		}
-		//yay, both are initialized and they correspond to different hands!
-		//let's set up the variables
-		DisplayBaseMessage(false);
-		if(data[0].which_hand == 1) // 1 is left, 2 is right.
-		{
-			assert(data[1].which_hand == 2);
-			mControllerIndices[LEFT_CONTROLLER]  = connectedControllers[0];
-			mControllerIndices[RIGHT_CONTROLLER] = connectedControllers[1];
-		}
-		else
-		{
-			assert(data[0].which_hand == 2);
-			assert(data[1].which_hand == 1);
-			mControllerIndices[LEFT_CONTROLLER]  = connectedControllers[1];
-			mControllerIndices[RIGHT_CONTROLLER] = connectedControllers[0];
-		}
-
-		return true;
-	}
-
 	System::Void MainForm::UpdateBindings(System::Object^  sender, System::EventArgs^  e)
 	{ 
 		//if this is called during initialization, it's because the initial values are set. We don't need to save those, in fact it'd probably cause bugs.
 		//it would also get called a lot during setting loading, which I'd rather avoid
 		if(mIgnoreBindingChanges) return;
 
-		ControllerMapping& mapping = mControllerMappings[this->mControllerChoice->SelectedIndex]; //0 = left, 1 = right
+		ControllerMapping& mapping = this->mJoystickManagement->mControllerMappings[this->mControllerChoice->SelectedIndex]; //0 = left, 1 = right
 
 		//get out buttons/axis settings
 		ProcessRadioButtons();
@@ -555,7 +367,7 @@ namespace My05HydraReading
 			mapping.TriggerButton.Set(mTriggerJoy->SelectedIndex, mTriggerButton->SelectedIndex);
 		}
 
-		if(!mapping.Save(GetDefaultIniFilename(this->mControllerChoice->SelectedIndex)))
+		if(!mapping.Save(JoystickManagement::GetDefaultIniFilename(this->mControllerChoice->SelectedIndex)))
 		{
 			Error("Could not save settings!");
 			return;
@@ -570,14 +382,14 @@ namespace My05HydraReading
 
 	const bool MainForm::LoadSettings(const std::wstring& filename)
 	{
-		if(!mControllerMappings[this->mControllerChoice->SelectedIndex].Load(filename, (this->mControllerChoice->SelectedIndex == 0 ? L"0" : L"1"))) return false;
+		if(!this->mJoystickManagement->mControllerMappings[this->mControllerChoice->SelectedIndex].Load(filename, (this->mControllerChoice->SelectedIndex == 0 ? L"0" : L"1"))) return false;
 		ApplySettings();
 		return true;
 	}
 	
 	const bool MainForm::SaveSettings(const std::wstring& filename)
 	{
-		return mControllerMappings[this->mControllerChoice->SelectedIndex].Save(filename);
+		return this->mJoystickManagement->mControllerMappings[this->mControllerChoice->SelectedIndex].Save(filename);
 	}
 
 	void MainForm::ProcessRadioButtons()
@@ -606,7 +418,7 @@ namespace My05HydraReading
 	void MainForm::ApplySettings()
 	{
 		this->mIgnoreBindingChanges = true;
-		ControllerMapping& mapping = mControllerMappings[this->mControllerChoice->SelectedIndex];
+		ControllerMapping& mapping = this->mJoystickManagement->mControllerMappings[this->mControllerChoice->SelectedIndex];
 		
 		//  Buttons
 		//1
@@ -723,7 +535,7 @@ namespace My05HydraReading
 		saveFileDialog1->Filter = "ini files (*.ini)|*.ini|All files (*.*)|*.*";
 		saveFileDialog1->FilterIndex = 1;
 		saveFileDialog1->RestoreDirectory = true;
-		saveFileDialog1->Title = (this->mControllerChoice->SelectedIndex == LEFT_CONTROLLER ? "Save left controller settings" : "Save right controller settings");
+		saveFileDialog1->Title = (this->mControllerChoice->SelectedIndex == JoystickManagement::LEFT_CONTROLLER ? "Save left controller settings" : "Save right controller settings");
 
 		if ( saveFileDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK )
 		{
@@ -739,22 +551,12 @@ namespace My05HydraReading
 		openFileDialog1->Filter = "ini files (*.ini)|*.ini|All files (*.*)|*.*";
 		openFileDialog1->FilterIndex = 1;
 		openFileDialog1->RestoreDirectory = true;
-		openFileDialog1->Title = (this->mControllerChoice->SelectedIndex == LEFT_CONTROLLER ? "Load left controller settings" : "Load right controller settings");
+		openFileDialog1->Title = (this->mControllerChoice->SelectedIndex == JoystickManagement::LEFT_CONTROLLER ? "Load left controller settings" : "Load right controller settings");
 
 		if ( openFileDialog1->ShowDialog() == System::Windows::Forms::DialogResult::OK )
 		{
 			LoadSettings(ToWideString(openFileDialog1->FileName));
 		}
-	}
-
-	const bool MainForm::LoadOrigin(int side)
-	{
-		return IniReadVec3f(L"origin", GetDefaultIniFilename(side).c_str(), mOrigins[side]);
-	}
-	
-	const bool MainForm::SaveOrigin(int side)
-	{
-		return IniWriteVec3f(L"origin", mOrigins[side], GetDefaultIniFilename(side).c_str());
 	}
 
 	System::Void MainForm::OnAboutClicked(System::Object^  sender, System::EventArgs^  e)
@@ -778,54 +580,33 @@ namespace My05HydraReading
 		mSetOriginForm = nullptr;
 	}
 
-	namespace
-	{
-		void SetDigital(JoystickState joyStates[], ButtonMapping& bm, bool pressed)
-		{
-			if(bm.Joy == -1) return;
-			joyStates[bm.Joy].Digital[bm.Button] = pressed;
-		}
-
-		template<typename T> void Clamp(T min, T& val, T max)
-		{
-			if(val < min) val = min;
-			if(val > max) val = max;
-		}
-
-		//for position & rotation we take range & inverted into account.
-		void SetAnalogPosRot(JoystickState joyStates[], AxisMapping& am, float position)
-		{
-			if(am.Joy == -1) return;
-			Clamp(-float(am.Range), position, float(am.Range));
-			if(am.Inverted) position = -position;
-			joyStates[am.Joy].Analog[am.Axis] += long(float(PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 * (position/am.Range));
-			Clamp(long(PPJOY_AXIS_MIN), joyStates[am.Joy].Analog[am.Axis], long(PPJOY_AXIS_MAX));
-		}
-
-		void SetAnalogOther(JoystickState joyStates[], AxisMapping& am, float position)
-		{
-			if(am.Joy == -1) return;
-			joyStates[am.Joy].Analog[am.Axis] += long(float(PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2 * position);
-			Clamp(long(PPJOY_AXIS_MIN), joyStates[am.Joy].Analog[am.Axis], long(PPJOY_AXIS_MAX));
-		}
-	}
-
 	System::Void MainForm::OnTimerTick(System::Object^  sender, System::EventArgs^  e)
 	{
+		std::string message;
 		//set correct base index
-		if(!this->SetBase())
+		if(!this->mJoystickManagement->SetBase(message))
 		{
+			this->Error(message);
 			return;
 		}
 		//set correct controller indices
-		if(!this->SetControllerIndices())
+		switch(this->mJoystickManagement->SetControllerIndices(message))
 		{
+		case JoystickManagement::eSuccess:
+			this->DisplayBaseMessage(false);
+			break;
+		case JoystickManagement::eError:
+			this->Error(message);
+			return;
+		case JoystickManagement::eMessage:
+			this->mLabelBase->Text = gcnew System::String(message.c_str());
+			this->DisplayBaseMessage(true);
 			return;
 		}
 
 		if(mSetOriginForm) //Set Origin Window currently open?
 		{
-			int controllerToQuery = this->mControllerIndices[this->mControllerChoice->SelectedIndex];
+			int controllerToQuery = this->mJoystickManagement->mControllerIndices[this->mControllerChoice->SelectedIndex];
 			sixenseControllerData data;
 			if( sixenseGetNewestData(controllerToQuery, &data) != SIXENSE_SUCCESS )
 			{
@@ -838,9 +619,9 @@ namespace My05HydraReading
 				//apply origin on any key press
 				for(int dim = 0; dim < 3; ++dim)
 				{
-					mOrigins[this->mControllerChoice->SelectedIndex][dim] = data.pos[dim];
+					this->mJoystickManagement->mOrigins[this->mControllerChoice->SelectedIndex][dim] = data.pos[dim];
 				}
-				SaveOrigin(this->mControllerChoice->SelectedIndex);
+				this->mJoystickManagement->SaveOrigin(this->mControllerChoice->SelectedIndex);
 				//And save it.
 				//Also close the form, obviously.
 				mSetOriginForm->Close();
@@ -849,150 +630,10 @@ namespace My05HydraReading
 			return;
 		}
 
-		//clearing the joy states in case the mapping was changed and there's still old values in there
-		for(unsigned int joyIndex = 0; joyIndex < NUM_VIRTUAL_JOYSTICKS; ++joyIndex)
+		if(!this->mJoystickManagement->Update(message))
 		{
-			for(unsigned int analogIndex = 0; analogIndex < NUM_ANALOG; ++analogIndex)
-			{
-				mJoyStates[joyIndex].Analog[analogIndex] = (PPJOY_AXIS_MIN+PPJOY_AXIS_MAX)/2;
-			}
-			for(unsigned int digitalIndex = 0; digitalIndex < NUM_DIGITAL; ++digitalIndex)
-			{
-				mJoyStates[joyIndex].Digital[digitalIndex] = 0;
-			}
-		}
-
-		//this needs to be done for every controller - of course.
-		for(unsigned int controllerIndex = 0; controllerIndex < 2; ++controllerIndex)
-		{
-			int controllerToQuery = this->mControllerIndices[controllerIndex];
-			float* origin = this->mOrigins[controllerIndex];
-			ControllerMapping& mapping = this->mControllerMappings[controllerIndex];
-
-			sixenseControllerData data;
-			if( sixenseGetNewestData(controllerToQuery, &data) != SIXENSE_SUCCESS )
-			{
-				this->Error("Could not poll data!");
-				return;
-			}
-				
-			//input sending time!
-
-			//filling the joy states
-		
-			//Buttons
-			SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton1], (data.buttons & SIXENSE_BUTTON_1) != 0);
-			SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton2], (data.buttons & SIXENSE_BUTTON_2) != 0);
-			SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton3], (data.buttons & SIXENSE_BUTTON_3) != 0);
-			SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButton4], (data.buttons & SIXENSE_BUTTON_4) != 0);
-			SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonStart], (data.buttons & SIXENSE_BUTTON_START) != 0);
-			SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonJoystick], (data.buttons & SIXENSE_BUTTON_JOYSTICK) != 0);
-			SetDigital(mJoyStates, mapping.Buttons[ControllerMapping::eButtonBumper], (data.buttons & SIXENSE_BUTTON_BUMPER) != 0);
-
-			//Position
-			SetAnalogPosRot(mJoyStates, mapping.Position[0], data.pos[0]-origin[0]);
-			SetAnalogPosRot(mJoyStates, mapping.Position[1], data.pos[1]-origin[1]);
-			SetAnalogPosRot(mJoyStates, mapping.Position[2], data.pos[2]-origin[2]);
-
-			//Rotation
-
-			//thanks, http://www.paulbourke.net/geometry/eulerangle/
-			//still I'm not quite sure if this is correct... needs verifying.
-			//okay, thanks to Opadong it's now verified.
-		
-			float pitch = asin(data.rot_mat[2][1]);
-			SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::ePitch], pitch * float(180.0 / M_PI));
-
-			float yaw = atan2(-data.rot_mat[2][0], data.rot_mat[2][2]);
-			SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eYaw], yaw * float(180.0 / M_PI));
-
-			float roll = atan2(data.rot_mat[0][1], data.rot_mat[1][1]);
-			SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eRoll], roll * float(180.0 / M_PI));
-
-			//Trigger
-
-			if(mapping.TriggerIsAxis)
-			{
-				if(mapping.TriggerUseFullAxis)
-				{
-					AxisMapping& am = mapping.TriggerAxis;
-					if(am.Joy != -1)
-					{
-						const long offset = long(float(PPJOY_AXIS_MAX - PPJOY_AXIS_MIN) * float(data.trigger)/am.Range);
-						if(!am.Inverted)
-						{
-							mJoyStates[am.Joy].Analog[am.Axis] = PPJOY_AXIS_MIN + offset;
-						}
-						else
-						{
-							mJoyStates[am.Joy].Analog[am.Axis] = PPJOY_AXIS_MAX - offset;
-						}
-					}
-				}
-				else
-				{
-					SetAnalogPosRot(mJoyStates, mapping.TriggerAxis, float(data.trigger));
-				}
-			}
-			else
-			{
-				if(mapping.TriggerButton.Joy != -1)
-				{
-					mJoyStates[mapping.TriggerButton.Joy].Digital[mapping.TriggerButton.Button] = (data.trigger > 127 ? 1 : 0);
-				}
-			}
-
-			//Analog Stick X
-		
-			{
-				float position = float(data.joystick_x - 127)/128;
-				if(mapping.JoystickXIsAxis)
-				{
-					SetAnalogOther(mJoyStates, mapping.JoystickXAxis, (mapping.JoystickXAxis.Inverted ? - position : position));
-				}
-				else
-				{
-					SetDigital(mJoyStates, mapping.JoystickXButtons.Min, position < -0.5f);
-					SetDigital(mJoyStates, mapping.JoystickXButtons.Max, position > 0.5f);
-				}
-			}
-
-			//Analog Stick Y
-		
-			{
-				float position = -float(data.joystick_y - 127)/128; //reportedly flipped
-				if(mapping.JoystickYIsAxis)
-				{
-					SetAnalogOther(mJoyStates, mapping.JoystickYAxis, (mapping.JoystickYAxis.Inverted ? - position : position));
-				}
-				else
-				{
-					SetDigital(mJoyStates, mapping.JoystickYButtons.Min, position < -0.5f);
-					SetDigital(mJoyStates, mapping.JoystickYButtons.Max, position > 0.5f);
-				}
-			}
-
-			//send it to the joystick
-			for(unsigned int joyIndex = 0; joyIndex < NUM_VIRTUAL_JOYSTICKS; ++joyIndex)
-			{
-				DWORD retSize;
-				if (!DeviceIoControl(mJoyHandles[joyIndex],IOCTL_PPORTJOY_SET_STATE,mJoyStates+joyIndex,sizeof(JoystickState),NULL,0,&retSize,NULL))
-				{
-					DWORD rc = GetLastError();
-					if (rc==2)
-					{
-						std::stringstream ss;
-						ss << "Virtual joystick " << joyIndex+1 << " removed. Exiting.";
-						this->Error(ss.str().c_str());
-						return;
-					}
-					std::stringstream ss;
-					ss << "Error " << rc << " updating virtual joystick " << joyIndex+1;
-					this->Error(ss.str().c_str());
-					return;
-				}
-			}
+			this->Error(message);
+			return;
 		}
 	}
-
 }

@@ -26,11 +26,9 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include <string>
 #include <vector>
 #include <cassert>
-#include <sixense.h>
 #include <Windows.h>
 
-struct ControllerMapping;
-struct JoystickState;
+class JoystickManagement;
 
 namespace My05HydraReading
 {
@@ -76,6 +74,8 @@ namespace My05HydraReading
 		//  General
 		System::Windows::Forms::Label^  mLabelBase; // General messages displayed instead of ordinary content
 		System::Windows::Forms::ComboBox^  mControllerChoice; // The Controller Dropdown Menu
+		System::Windows::Forms::NumericUpDown^  mUpdateInterval;
+		System::Windows::Forms::Label^  mUpdateIntervalLabel;
 
 		//  Buttons
 		//1
@@ -129,6 +129,8 @@ namespace My05HydraReading
 		System::Windows::Forms::ComboBox^		mTriggerJoy;
 		System::Windows::Forms::ComboBox^		mTriggerAxis;
 		System::Windows::Forms::ComboBox^		mTriggerButton;
+		System::Windows::Forms::CheckBox^		mTriggerAxisInvert;
+		System::Windows::Forms::CheckBox^		mTriggerFullAxis;
 
 		//  Position
 		//X
@@ -170,12 +172,8 @@ namespace My05HydraReading
 		System::Windows::Forms::GroupBox^  mJoystickGroup;
 		System::Windows::Forms::GroupBox^  mControlGroup;
 		System::Windows::Forms::GroupBox^  mRotationGroup;
-private: System::Windows::Forms::NumericUpDown^  mUpdateInterval;
-private: System::Windows::Forms::Label^  mUpdateIntervalLabel;
-private: System::Windows::Forms::CheckBox^  mTriggerAxisInvert;
-private: System::Windows::Forms::CheckBox^  mTriggerFullAxis;
-
 		 System::Windows::Forms::GroupBox^  mTriggerGroup;
+
 		
 #pragma region Windows Form Designer generated code
 		/// <summary>
@@ -1416,34 +1414,6 @@ private: System::Windows::Forms::CheckBox^  mTriggerFullAxis;
 		**/
 		System::Void OnOpen(System::Object^  sender, System::EventArgs^  e);
 
-		/** \brief Displays an Error and exits.
-		**/
-		void Error(const std::string& message);
-
-		/** \brief Changes visibility to either display "Put controllers in Base" or the actual stuff.
-			\note Needs to be updated when new elements get added, obviously.
-		**/
-		void DisplayBaseMessage(const bool display);
-
-		/** \brief Sets the active base to the first one connected
-			\return Whether any bases are connected
-			\note In debug mode, returns true and sets the active base to 0 if none are connected.
-		**/
-		const bool SetBase();
-
-	public:
-		static const int LEFT_CONTROLLER = 0;
-		static const int RIGHT_CONTROLLER = 1;
-	private:
-
-		int* mControllerIndices;
-
-		/**	\brief Checks if the controllers are correctly initalized (i.e. have been in the base once, but on different sides)
-			and sets mLeftControllerIndex and mRightControllerIndex accordingly.
-			\return Whether the controllers are correctly initialized
-		**/
-		const bool SetControllerIndices();
-
 		/**	\brief This is where The Magicks happen :)
 			
 			Called periodically. Retrieves Data from the Hydra and uses it.
@@ -1468,17 +1438,7 @@ private: System::Windows::Forms::CheckBox^  mTriggerFullAxis;
 
 		const bool IsCurrentControllerLeft() { return this->mControllerChoice->SelectedIndex == 0; }
 
-		ControllerMapping* mControllerMappings; // 0 = left, 1 = right
-
 		System::Void OnClose(System::Object^  sender, System::Windows::Forms::FormClosingEventArgs^  e);
-
-		/** \brief Loads the given file into the currently active controller.
-		**/
-		const bool LoadSettings(const std::wstring& filename);
-		
-		/** \brief Saves the currently active controller to the given file.
-		**/
-		const bool SaveSettings(const std::wstring& filename);
 
 		void ApplySettings();
 		void ProcessRadioButtons();
@@ -1489,20 +1449,29 @@ private: System::Windows::Forms::CheckBox^  mTriggerFullAxis;
 			this->mTimer->Interval = System::Convert::ToInt32(this->mUpdateInterval->Value);
 		}
 
-		float** mOrigins;
-
-		const bool LoadOrigin(int side);
-		const bool SaveOrigin(int side);
-
 		SetOriginForm^ mSetOriginForm;
 
 		System::Void OnSetOriginClicked(System::Object^  sender, System::EventArgs^  e);
 		System::Void OnSetOriginClosed(System::Object^  sender, System::Windows::Forms::FormClosedEventArgs^  e);
-		
-		static const unsigned int NUM_VIRTUAL_JOYSTICKS = 4;
 
-		HANDLE* mJoyHandles;
-		JoystickState* mJoyStates;
+		/** \brief Displays an Error and exits.
+		**/
+		void Error(const std::string& message);
+
+		/** \brief Changes visibility to either display "Put controllers in Base" or the actual stuff.
+			\note Needs to be updated when new elements get added, obviously.
+		**/
+		void DisplayBaseMessage(const bool display);
+
+		/** \brief Loads the given file into the currently active controller.
+		**/
+		const bool LoadSettings(const std::wstring& filename);
+		
+		/** \brief Saves the currently active controller to the given file.
+		**/
+		const bool SaveSettings(const std::wstring& filename);
+
+		JoystickManagement* mJoystickManagement;
 	};
 }
 

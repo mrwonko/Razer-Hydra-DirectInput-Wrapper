@@ -22,6 +22,7 @@ void Error(const std::string& msg)
 
 void StartUpdating(JoystickManagement& jm)
 {
+    Sleep(1000); //even after finding the base, it may not immediately find the controllers -.-
     while(g_Running)
     {
         std::string message;
@@ -31,25 +32,35 @@ void StartUpdating(JoystickManagement& jm)
 			Error(message);
 			return;
 		}
-		//set correct controller indices
-		switch(jm.SetControllerIndices(message) != JoystickManagement::eSuccess)
+		switch(jm.SetControllerIndices(message))
 		{
-			Error(message);
+        case JoystickManagement::eError:
+            Error(message);
 			return;
+        case JoystickManagement::eMessage:
+            g_coutMutex.Lock();
+            std::cout<<message<<std::endl;
+            g_coutMutex.Unlock();
+            Sleep(1000);
+            break;
+        case JoystickManagement::eSuccess:
+            if(!jm.Update(message))
+            {
+                Error(message);
+                return;
+            }
+            Sleep(16);
+            break;
 		}
-
-		if(!jm.Update(message))
-		{
-			Error(message);
-			return;
-		}
-        Sleep(16);
     }
 }
 
 struct sixenseAutoDeinit
 {
-    ~sixenseAutoDeinit() { sixenseExit(); }
+    ~sixenseAutoDeinit()
+    {
+        sixenseExit();
+    }
 };
 
 int main()

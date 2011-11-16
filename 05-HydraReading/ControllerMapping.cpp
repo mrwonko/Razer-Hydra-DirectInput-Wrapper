@@ -297,7 +297,7 @@ const bool ControllerMapping::Load(const std::wstring& filename, const wchar_t* 
 	
 	//analog stick Y
 	if(!ReadBool(L"analog_stick_y", L"isAxis", L"true", filename_c, JoystickYIsAxis)) return false;
-	if(JoystickXIsAxis)
+	if(JoystickYIsAxis)
 	{
 		if(!ReadInt(L"analog_stick_y", L"joystick", joy,      filename_c, JoystickYAxis.Joy, -1, 3)) return false;
 		if(!ReadInt(L"analog_stick_y", L"axis",     L"7",     filename_c, JoystickYAxis.Axis, 0, NUM_ANALOG-1)) return false;

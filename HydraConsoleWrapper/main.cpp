@@ -14,9 +14,9 @@ sf::Mutex g_coutMutex;
 
 void Error(const std::string& msg)
 {
-    g_coutMutex.Lock();
+    g_coutMutex.lock();
     std::cout<<msg<<std::endl;
-    g_coutMutex.Unlock();
+    g_coutMutex.unlock();
     g_Running = false;
 }
 
@@ -38,9 +38,9 @@ void StartUpdating(JoystickManagement& jm)
             Error(message);
 			return;
         case JoystickManagement::eMessage:
-            g_coutMutex.Lock();
+            g_coutMutex.lock();
             std::cout<<message<<std::endl;
-            g_coutMutex.Unlock();
+            g_coutMutex.unlock();
             Sleep(1000);
             break;
         case JoystickManagement::eSuccess:
@@ -111,17 +111,17 @@ int main()
     //start main program :)
     std::cout<<"Starting program."<<std::endl;
     sf::Thread thread(boost::bind(StartUpdating, boost::ref(jm)));
-    thread.Launch();
+    thread.launch();
     std::string input;
     while(input != "exit" && g_Running)
     {
-        g_coutMutex.Lock();
+        g_coutMutex.lock();
         std::cout<<"Enter exit to exit."<<std::endl;
-        g_coutMutex.Unlock();
+        g_coutMutex.unlock();
         std::getline(std::cin, input);
     }
     g_Running = false;
-    thread.Wait();
+    thread.wait();
 
     return 0;
 }

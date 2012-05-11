@@ -25,6 +25,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 #include "JoystickState.h"
 #include <Windows.h>
 #include <sstream>
+#include <climits>
 
 ControllerMapping::ControllerMapping() :
 	TriggerIsAxis(true),
@@ -237,17 +238,17 @@ const bool ControllerMapping::Load(const std::wstring& filename, const wchar_t* 
 	if(!ReadInt(L"axis_x", L"joystick", joy,      filename_c, Position[0].Joy,  -1, 3)) return false;
 	if(!ReadInt(L"axis_x", L"axis",     L"0",     filename_c, Position[0].Axis, 0, NUM_ANALOG-1)) return false;
 	if(!ReadBool(L"axis_x",L"inverted", L"false", filename_c, Position[0].Inverted)) return false;
-	if(!ReadInt(L"axis_x", L"range",    L"100",   filename_c, Position[0].Range, 0, 180)) return false;
+	if(!ReadInt(L"axis_x", L"range",    L"100",   filename_c, Position[0].Range, 0, INT_MAX)) return false;
 
 	if(!ReadInt(L"axis_y", L"joystick", joy,      filename_c, Position[1].Joy,  -1, 3)) return false;
 	if(!ReadInt(L"axis_y", L"axis",     L"1",     filename_c, Position[1].Axis, 0, NUM_ANALOG-1)) return false;
 	if(!ReadBool(L"axis_y",L"inverted", L"false", filename_c, Position[1].Inverted)) return false;
-	if(!ReadInt(L"axis_y", L"range",    L"100",   filename_c, Position[1].Range, 0, 180)) return false;
+	if(!ReadInt(L"axis_y", L"range",    L"100",   filename_c, Position[1].Range, 0, INT_MAX)) return false;
 
 	if(!ReadInt(L"axis_z", L"joystick", joy,      filename_c, Position[2].Joy,  -1, 3)) return false;
 	if(!ReadInt(L"axis_z", L"axis",     L"2",     filename_c, Position[2].Axis, 0, NUM_ANALOG-1)) return false;
 	if(!ReadBool(L"axis_z",L"inverted", L"false", filename_c, Position[2].Inverted)) return false;
-	if(!ReadInt(L"axis_z", L"range",    L"100",   filename_c, Position[2].Range, 0, 180)) return false;
+	if(!ReadInt(L"axis_z", L"range",    L"100",   filename_c, Position[2].Range, 0, INT_MAX)) return false;
 
 	//rotation
 	if(!ReadInt(L"axis_pitch", L"joystick", joy,      filename_c, Rotation[ePitch].Joy,  -1, 3)) return false;

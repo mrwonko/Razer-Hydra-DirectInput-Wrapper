@@ -72,28 +72,34 @@ namespace My05HydraReading {
 		/// </summary>
 		void InitializeComponent(void)
 		{
-			System::Windows::Forms::Label^  label1;
-			label1 = (gcnew System::Windows::Forms::Label());
-			this->SuspendLayout();
-			label1->AutoSize = true;
-			label1->Location = System::Drawing::Point(12, 9);
-			label1->Name = L"label1";
-			label1->Size = System::Drawing::Size(187, 39);
-			label1->TabIndex = 0;
-			label1->Text = L"Hold the controller in the position that\r\nshould correspond to the middle of the\r" 
-				L"\nposition axes and press any key.";
-			this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
-			this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
-			this->ClientSize = System::Drawing::Size(212, 58);
-			this->Controls->Add(label1);
-			this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
-			this->MaximizeBox = false;
-			this->Name = L"SetOriginForm";
-			this->Text = L"Set Origin";
-			this->ResumeLayout(false);
-			this->PerformLayout();
+            System::Windows::Forms::Label^  label1;
+            System::ComponentModel::ComponentResourceManager^  resources = (gcnew System::ComponentModel::ComponentResourceManager(SetOriginForm::typeid));
+            label1 = (gcnew System::Windows::Forms::Label());
+            this->SuspendLayout();
+            // 
+            // label1
+            // 
+            label1->AutoSize = true;
+            label1->Location = System::Drawing::Point(12, 9);
+            label1->Name = L"label1";
+            label1->Size = System::Drawing::Size(196, 78);
+            label1->TabIndex = 0;
+            label1->Text = resources->GetString(L"label1.Text");
+            // 
+            // SetOriginForm
+            // 
+            this->AutoScaleDimensions = System::Drawing::SizeF(6, 13);
+            this->AutoScaleMode = System::Windows::Forms::AutoScaleMode::Font;
+            this->ClientSize = System::Drawing::Size(212, 93);
+            this->Controls->Add(label1);
+            this->FormBorderStyle = System::Windows::Forms::FormBorderStyle::FixedSingle;
+            this->MaximizeBox = false;
+            this->Name = L"SetOriginForm";
+            this->Text = L"Set Origin";
+            this->ResumeLayout(false);
+            this->PerformLayout();
 
-		}
+        }
 #pragma endregion
 	};
 }

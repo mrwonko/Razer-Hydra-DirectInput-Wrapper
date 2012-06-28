@@ -120,4 +120,12 @@
   <metadata name="label1.GenerateMember" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
     <value>False</value>
   </metadata>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Hold the controller in the position that
+should correspond to the middle of the
+position axes and press any key.
+You can also press Buttons 1, 2, 3, 4
+and Start simultaneously to set the origin
+at any time.</value>
+  </data>
 </root>

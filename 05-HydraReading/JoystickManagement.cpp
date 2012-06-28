@@ -276,6 +276,18 @@ const bool JoystickManagement::Update(std::string& error)
 			return false;
 		}
 
+        // Reset the origin to the current position when keys 1-4 and start are pressed.
+
+        if((data.buttons &  SIXENSE_BUTTON_1) && (data.buttons & SIXENSE_BUTTON_2) && (data.buttons & SIXENSE_BUTTON_3) && (data.buttons & SIXENSE_BUTTON_4) && (data.buttons & SIXENSE_BUTTON_START))
+        {
+            //apply origin on any key press
+			for(int dim = 0; dim < 3; ++dim)
+			{
+				mOrigins[controllerIndex][dim] = data.pos[dim];
+			}
+			SaveOrigin(controllerIndex);
+        }
+
 		//input sending time!
 
 		//filling the joy states
@@ -301,13 +313,33 @@ const bool JoystickManagement::Update(std::string& error)
 		//okay, thanks to Opadong it's now verified.
 
 		float pitch = asin(data.rot_mat[2][1]);
-		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::ePitch], pitch * float(180.0 / M_PI));
+		// pitch = beta = -r31, sqrtf(r32^2 + r33^2)
+		//pitch = atan2(-data.rot_mat[1][0], sqrtf(data.rot_mat[1][1] * data.rot_mat[1][1] + data.rot_mat[1][2] * data.rot_mat[1][2]));
+		//pitch = atan2(data.rot_mat[0][0], sqrtf(data.rot_mat[0][1] * data.rot_mat[0][1] + data.rot_mat[0][2] * data.rot_mat[0][2]));
+		//pitch = acos(data.rot_mat[2][2]);
+		pitch *= float(180.0 / M_PI);
+		while(pitch > 180) pitch -= 360;
+		while(pitch < -180) pitch += 360;
+		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::ePitch], pitch);
 
 		float yaw = atan2(-data.rot_mat[2][0], data.rot_mat[2][2]);
-		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eYaw], yaw * float(180.0 / M_PI));
+		// yaw = alpha = r21, r11
+		//yaw = atan2(data.rot_mat[0][0], data.rot_mat[2][0]);
+		//yaw = atan2(data.rot_mat[1][0], data.rot_mat[2][0]);
+		//yaw = atan2(data.rot_mat[2][0], data.rot_mat[2][1]);
+		yaw *= float(180.0 / M_PI);
+		while(yaw > 180) yaw -= 360;
+		while(yaw < -180) yaw += 360;
+		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eYaw], yaw);
 
 		float roll = atan2(data.rot_mat[0][1], data.rot_mat[1][1]);
-		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eRoll], roll * float(180.0 / M_PI));
+		// roll = gamma = r32, r33
+		//roll = atan2(data.rot_mat[1][1], data.rot_mat[1][2]);
+		//roll = -atan2(data.rot_mat[0][2], data.rot_mat[1][2]);
+		roll *= float(180.0 / M_PI);
+		while(roll > 180) roll -= 360;
+		while(roll < -180) roll += 360;
+		SetAnalogPosRot(mJoyStates, mapping.Rotation[ControllerMapping::eRoll], roll);
 
 		//Trigger
 
